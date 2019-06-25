@@ -1,0 +1,994 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     37120,        986]
+NotebookOptionsPosition[     33635,        896]
+NotebookOutlinePosition[     33970,        911]
+CellTagsIndexPosition[     33927,        908]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"d3a1", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox[
+      SqrtBox["3"], "2"], ",", 
+     FractionBox["1", "2"], ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d3a2", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox[
+      SqrtBox["3"], "2"], ",", 
+     FractionBox[
+      RowBox[{"-", "1"}], "2"], ",", "0"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d3a3", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d3b1", "=", " ", 
+   FractionBox[
+    RowBox[{"Cross", "[", 
+     RowBox[{"d3a2", ",", "d3a3"}], "]"}], 
+    RowBox[{"d3a1", ".", 
+     RowBox[{"Cross", "[", 
+      RowBox[{"d3a2", ",", "d3a3"}], "]"}]}]]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"d3b2", "=", 
+   FractionBox[
+    RowBox[{"Cross", "[", 
+     RowBox[{"d3a3", ",", "d3a1"}], "]"}], 
+    RowBox[{"d3a2", ".", 
+     RowBox[{"Cross", "[", 
+      RowBox[{"d3a3", ",", "d3a1"}], "]"}]}]]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"a1", "=", 
+  RowBox[{"Drop", "[", 
+   RowBox[{"d3a1", ",", 
+    RowBox[{"-", "1"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"a2", "=", 
+  RowBox[{"Drop", "[", 
+   RowBox[{"d3a2", ",", 
+    RowBox[{"-", "1"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"a3", "=", 
+  RowBox[{"Drop", "[", 
+   RowBox[{"d3a3", ",", 
+    RowBox[{"-", "1"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"b1", "=", 
+  RowBox[{"Drop", "[", 
+   RowBox[{"d3b1", ",", 
+    RowBox[{"-", "1"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"b2", "=", 
+  RowBox[{"Drop", "[", 
+   RowBox[{"d3b2", ",", 
+    RowBox[{"-", "1"}]}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.769375108593067*^9, 3.7693751247780952`*^9}, {
+  3.769377360287838*^9, 3.769377373750183*^9}, {3.769425933121305*^9, 
+  3.7694259488306513`*^9}, {3.7694259961266813`*^9, 3.769426001166843*^9}, {
+  3.7694260415191927`*^9, 
+  3.769426149260062*^9}},ExpressionUUID->"f799e1f9-59dd-4dd3-adf0-\
+14c7287c67b7"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   FractionBox[
+    SqrtBox["3"], "2"], ",", 
+   FractionBox["1", "2"]}], "}"}]], "Output",
+ CellChangeTimes->{{3.769426017238797*^9, 3.769426041818603*^9}, 
+   3.769426100661044*^9, {3.7694261455509357`*^9, 
+   3.769426151032619*^9}},ExpressionUUID->"1056aa9f-e052-49bd-bbd3-\
+9003da8bacc7"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   FractionBox[
+    SqrtBox["3"], "2"], ",", 
+   RowBox[{"-", 
+    FractionBox["1", "2"]}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.769426017238797*^9, 3.769426041818603*^9}, 
+   3.769426100661044*^9, {3.7694261455509357`*^9, 
+   3.769426151034171*^9}},ExpressionUUID->"6a71d84f-eaad-4f6d-b8a0-\
+8f8eb7e09f3f"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0", ",", "0"}], "}"}]], "Output",
+ CellChangeTimes->{{3.769426017238797*^9, 3.769426041818603*^9}, 
+   3.769426100661044*^9, {3.7694261455509357`*^9, 
+   3.7694261510399237`*^9}},ExpressionUUID->"859d8477-08e2-4e8f-b272-\
+f2992090ce03"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   FractionBox["1", 
+    SqrtBox["3"]], ",", "1"}], "}"}]], "Output",
+ CellChangeTimes->{{3.769426017238797*^9, 3.769426041818603*^9}, 
+   3.769426100661044*^9, {3.7694261455509357`*^9, 
+   3.7694261510409937`*^9}},ExpressionUUID->"25b4d274-107c-4026-a0c8-\
+1d211f14740e"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   FractionBox["1", 
+    SqrtBox["3"]], ",", 
+   RowBox[{"-", "1"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.769426017238797*^9, 3.769426041818603*^9}, 
+   3.769426100661044*^9, {3.7694261455509357`*^9, 
+   3.769426151042171*^9}},ExpressionUUID->"7cad70ab-0c7a-4133-9148-\
+738888b1a5bc"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"p0", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"directLatticeVectors", "[", 
+   RowBox[{"n1_", ",", "n2_"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"n1", " ", "a1"}], "+", 
+   RowBox[{"n2", " ", "a2"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"reciprocalLatticeVectors", "[", 
+    RowBox[{"nk1_", ",", "nk2_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"nk1", " ", "b1"}], "+", 
+    RowBox[{"nk2", " ", "b2"}]}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"tableBLV", "[", 
+   RowBox[{"nn1_", ",", "nn2_"}], "]"}], ":=", 
+  RowBox[{"Flatten", "[", 
+   RowBox[{
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{"directLatticeVectors", "[", 
+         RowBox[{"n1", ",", "n2"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"n1", ",", 
+          RowBox[{"-", "nn1"}], ",", "nn1"}], "}"}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"n2", ",", 
+        RowBox[{"-", "nn2"}], ",", "nn2"}], "}"}]}], "]"}], ",", "1"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Graphics", "[", 
+  RowBox[{"{", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Arrow", "[", 
+     RowBox[{"{", 
+      RowBox[{"p0", ",", "a1"}], "}"}], "]"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"Arrow", "[", 
+     RowBox[{"{", 
+      RowBox[{"p0", ",", "a2"}], "}"}], "]"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"PointSize", "[", "0.02", "]"}], ",", "Red", ",", 
+      RowBox[{"Point", "[", 
+       RowBox[{"tableBLV", "[", 
+        RowBox[{"2", ",", "2"}], "]"}], "]"}]}], "}"}]}], "}"}], 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.769425471867896*^9, 3.769425472818005*^9}, {
+  3.769425582504818*^9, 3.769425721172022*^9}, {3.7694257577970753`*^9, 
+  3.769425837882918*^9}, {3.769425878709055*^9, 3.76942588988903*^9}, {
+  3.769426049582821*^9, 3.769426053663616*^9}, {3.769426161524007*^9, 
+  3.769426292738269*^9}, {3.769426373896842*^9, 3.769426469066592*^9}, {
+  3.769426504157751*^9, 
+  3.769426679450536*^9}},ExpressionUUID->"7dd2ec67-0894-4b17-a57b-\
+486a0470f68c"],
+
+Cell[BoxData[
+ GraphicsBox[{
+   ArrowBox[NCache[{{0, 0}, {
+      Rational[1, 2] 3^Rational[1, 2], Rational[1, 2]}}, {{0, 0}, {
+      0.8660254037844386, 0.5}}]], 
+   ArrowBox[NCache[{{0, 0}, {
+      Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}}, {{0, 0}, {
+      0.8660254037844386, -0.5}}]], {
+    {RGBColor[1, 0, 0], PointSize[0.02], 
+     PointBox[NCache[{{(-2) 3^Rational[1, 2], 0}, {
+        Rational[-3, 2] 3^Rational[1, 2], Rational[1, 2]}, {-3^Rational[1, 2],
+          1}, {Rational[-1, 2] 3^Rational[1, 2], Rational[3, 2]}, {0, 2}, {
+        Rational[-3, 2] 3^Rational[1, 2], 
+         Rational[-1, 2]}, {-3^Rational[1, 2], 0}, {
+        Rational[-1, 2] 3^Rational[1, 2], Rational[1, 2]}, {0, 1}, {
+        Rational[1, 2] 3^Rational[1, 2], Rational[
+         3, 2]}, {-3^Rational[1, 2], -1}, {
+        Rational[-1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {0, 0}, {
+        Rational[1, 2] 3^Rational[1, 2], Rational[1, 2]}, {
+        3^Rational[1, 2], 1}, {
+        Rational[-1, 2] 3^Rational[1, 2], Rational[-3, 2]}, {0, -1}, {
+        Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {
+        3^Rational[1, 2], 0}, {
+        Rational[3, 2] 3^Rational[1, 2], Rational[1, 2]}, {0, -2}, {
+        Rational[1, 2] 3^Rational[1, 2], Rational[-3, 2]}, {
+        3^Rational[1, 2], -1}, {
+        Rational[3, 2] 3^Rational[1, 2], Rational[-1, 2]}, {
+        2 3^Rational[1, 2], 0}}, {{-3.4641016151377544`, 
+         0}, {-2.598076211353316, 
+        0.5}, {-1.7320508075688772`, 1}, {-0.8660254037844386, 1.5}, {0, 
+        2}, {-2.598076211353316, -0.5}, {-1.7320508075688772`, 
+         0}, {-0.8660254037844386, 0.5}, {0, 1}, {0.8660254037844386, 
+        1.5}, {-1.7320508075688772`, -1}, {-0.8660254037844386, -0.5}, {0, 
+        0}, {0.8660254037844386, 0.5}, {
+        1.7320508075688772`, 1}, {-0.8660254037844386, -1.5}, {0, -1}, {
+        0.8660254037844386, -0.5}, {1.7320508075688772`, 0}, {
+        2.598076211353316, 0.5}, {0, -2}, {0.8660254037844386, -1.5}, {
+        1.7320508075688772`, -1}, {2.598076211353316, -0.5}, {
+        3.4641016151377544`, 0}}]]}}}]], "Output",
+ CellChangeTimes->{{3.7694255999688683`*^9, 3.769425603804441*^9}, {
+   3.769425672317047*^9, 3.769425721479018*^9}, {3.769425765529255*^9, 
+   3.7694257734268084`*^9}, {3.769425806350593*^9, 3.769425838571259*^9}, {
+   3.769425879266304*^9, 3.7694258901179323`*^9}, 3.769426208862852*^9, {
+   3.7694264101210623`*^9, 3.7694264696126537`*^9}, {3.769426668687275*^9, 
+   3.769426682088758*^9}, 
+   3.769426721136682*^9},ExpressionUUID->"7804ca7b-a2ce-4134-bc29-\
+f27720f6129d"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"plotLattice", "[", 
+   RowBox[{
+   "nn1_", ",", "nn2_", ",", "vec1_", ",", "vec2_", ",", "pointStyle_"}], 
+   "]"}], ":=", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"n1", "=", "nn1"}], ",", 
+      RowBox[{"n2", "=", "nn2"}], ",", 
+      RowBox[{"v1", "=", "vec1"}], ",", 
+      RowBox[{"v2", "=", "vec2"}], ",", 
+      RowBox[{"pc", "=", "pointStyle"}]}], "}"}], ",", "\[IndentingNewLine]", 
+    
+    RowBox[{
+     RowBox[{"tableLV", "=", 
+      RowBox[{"Flatten", "[", 
+       RowBox[{
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"m1", " ", "v1"}], "+", 
+             RowBox[{"m2", " ", "v2"}]}], ",", 
+            RowBox[{"{", 
+             RowBox[{"m1", ",", 
+              RowBox[{"-", "n1"}], ",", "n1"}], "}"}]}], "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"m2", ",", 
+            RowBox[{"-", "n2"}], ",", "n2"}], "}"}]}], "]"}], ",", "1"}], 
+       "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"p0", "=", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "0"}], "}"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Graphics", "[", 
+      RowBox[{"{", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Arrow", "[", 
+         RowBox[{"{", 
+          RowBox[{"p0", ",", "v1"}], "}"}], "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"Arrow", "[", 
+         RowBox[{"{", 
+          RowBox[{"p0", ",", "v2"}], "}"}], "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"PointSize", "[", "0.02", "]"}], ",", "pc", ",", 
+          RowBox[{"Point", "[", "tableLV", "]"}]}], "}"}]}], "}"}], "]"}]}]}],
+    "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.769426709681694*^9, 
+  3.7694267774906816`*^9}},ExpressionUUID->"9e78649a-7c07-40eb-a5db-\
+0b71a551054b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plotLattice", "[", 
+  RowBox[{"2", ",", "2", ",", "b1", ",", "b2", ",", "Blue"}], "]"}]], "Input",\
+
+ CellChangeTimes->{{3.769425856084408*^9, 3.769425872540169*^9}, {
+  3.7694259576745577`*^9, 3.769425986713933*^9}, {3.769426686259981*^9, 
+  3.7694267125313253`*^9}, {3.769426753753722*^9, 
+  3.7694267639455843`*^9}},ExpressionUUID->"39d25ed6-4623-43f3-acd2-\
+25cbedfb660d"],
+
+Cell[BoxData[
+ GraphicsBox[{
+   ArrowBox[NCache[{{0, 0}, {3^Rational[-1, 2], 1}}, {{0, 0}, {
+      0.5773502691896258, 1}}]], 
+   ArrowBox[NCache[{{0, 0}, {3^Rational[-1, 2], -1}}, {{0, 0}, {
+      0.5773502691896258, -1}}]], {
+    {RGBColor[0, 0, 1], PointSize[0.02], 
+     PointBox[NCache[{{(-4) 3^Rational[-1, 2], 0}, {-3^Rational[1, 2], 
+         1}, {(-2) 3^Rational[-1, 2], 2}, {-3^Rational[-1, 2], 3}, {0, 
+        4}, {-3^Rational[1, 2], -1}, {(-2) 3^Rational[-1, 2], 
+         0}, {-3^Rational[-1, 2], 1}, {0, 2}, {
+        3^Rational[-1, 2], 3}, {(-2) 
+         3^Rational[-1, 2], -2}, {-3^Rational[-1, 2], -1}, {0, 0}, {
+        3^Rational[-1, 2], 1}, {
+        2 3^Rational[-1, 2], 2}, {-3^Rational[-1, 2], -3}, {0, -2}, {
+        3^Rational[-1, 2], -1}, {2 3^Rational[-1, 2], 0}, {
+        3^Rational[1, 2], 1}, {0, -4}, {3^Rational[-1, 2], -3}, {
+        2 3^Rational[-1, 2], -2}, {3^Rational[1, 2], -1}, {
+        4 3^Rational[-1, 2], 0}}, {{-2.3094010767585034`, 
+         0}, {-1.7320508075688772`, 1}, {-1.1547005383792517`, 
+         2}, {-0.5773502691896258, 3}, {0, 
+        4}, {-1.7320508075688772`, -1}, {-1.1547005383792517`, 
+         0}, {-0.5773502691896258, 1}, {0, 2}, {
+        0.5773502691896258, 
+         3}, {-1.1547005383792517`, -2}, {-0.5773502691896258, -1}, {0, 0}, {
+        0.5773502691896258, 1}, {
+        1.1547005383792517`, 2}, {-0.5773502691896258, -3}, {0, -2}, {
+        0.5773502691896258, -1}, {1.1547005383792517`, 0}, {
+        1.7320508075688772`, 1}, {0, -4}, {0.5773502691896258, -3}, {
+        1.1547005383792517`, -2}, {1.7320508075688772`, -1}, {
+        2.3094010767585034`, 0}}]]}}}]], "Output",
+ CellChangeTimes->{
+  3.7694258732299213`*^9, {3.769425955844328*^9, 3.76942596420802*^9}, {
+   3.769426692263783*^9, 3.769426718144538*^9}, {3.769426756156054*^9, 
+   3.769426764203237*^9}},ExpressionUUID->"c3669717-6f41-4268-942f-\
+92d969af294a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plotLattice", "[", 
+  RowBox[{"1", ",", "1", ",", "b1", ",", "b2", ",", "Blue"}], "]"}]], "Input",\
+
+ CellChangeTimes->{{3.769426851774136*^9, 
+  3.7694268560462503`*^9}},ExpressionUUID->"07225638-b3fa-4822-877e-\
+e3ec2b0bcd19"],
+
+Cell[BoxData[
+ GraphicsBox[{
+   ArrowBox[NCache[{{0, 0}, {3^Rational[-1, 2], 1}}, {{0, 0}, {
+      0.5773502691896258, 1}}]], 
+   ArrowBox[NCache[{{0, 0}, {3^Rational[-1, 2], -1}}, {{0, 0}, {
+      0.5773502691896258, -1}}]], {
+    {RGBColor[0, 0, 1], PointSize[0.02], 
+     PointBox[NCache[{{(-2) 3^Rational[-1, 2], 0}, {-3^Rational[-1, 2], 1}, {
+        0, 2}, {-3^Rational[-1, 2], -1}, {0, 0}, {3^Rational[-1, 2], 1}, {
+        0, -2}, {3^Rational[-1, 2], -1}, {
+        2 3^Rational[-1, 2], 0}}, {{-1.1547005383792517`, 
+         0}, {-0.5773502691896258, 1}, {0, 2}, {-0.5773502691896258, -1}, {0, 
+        0}, {0.5773502691896258, 1}, {0, -2}, {0.5773502691896258, -1}, {
+        1.1547005383792517`, 0}}]]}}}]], "Output",
+ CellChangeTimes->{{3.76942685312446*^9, 
+  3.7694268562871313`*^9}},ExpressionUUID->"0c90b932-d443-4aa3-a5fd-\
+556d48023551"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"find2DReciprocalLatticeBasisVector", "[", 
+     RowBox[{"a1_", ",", "a2_"}], "]"}], ":=", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"d3a1", "=", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"a1", ",", "0"}], "}"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"d3a2", "=", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"a2", ",", "0"}], "}"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"d3a3", "=", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0", ",", "1"}], "}"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"d3b1", "=", 
+        RowBox[{"2", "\[Pi]", " ", 
+         FractionBox[
+          RowBox[{"Cross", "[", 
+           RowBox[{"d3a2", ",", "d3a3"}], "]"}], 
+          RowBox[{"d3a1", ".", 
+           RowBox[{"Cross", "[", 
+            RowBox[{"d3a2", ",", "d3a3"}], "]"}]}]]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"d3b2", "=", 
+        RowBox[{"2", "\[Pi]", 
+         FractionBox[
+          RowBox[{"Cross", "[", 
+           RowBox[{"d3a3", ",", "d3a1"}], "]"}], 
+          RowBox[{"d3a2", ".", 
+           RowBox[{"Cross", "[", 
+            RowBox[{"d3a3", ",", "d3a1"}], "]"}]}]]}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"b1", "=", 
+        RowBox[{"Drop", "[", 
+         RowBox[{"d3b1", ",", 
+          RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"b2", "=", 
+        RowBox[{"Drop", "[", 
+         RowBox[{"d3b2", ",", 
+          RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{"b1", ",", "b2"}], "}"}]}]}], "\[IndentingNewLine]", "]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"plotBLVAndRLV2D", "[", 
+     RowBox[{"nn1_", ",", "nn2_", ",", "a1_", ",", "a2_"}], "]"}], ":=", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"n1", "=", "nn1"}], ",", 
+        RowBox[{"n2", "=", "nn2"}]}], "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"b1", ",", "b2"}], "}"}], "=", 
+        RowBox[{"find2DReciprocalLatticeBasisVector", "[", 
+         RowBox[{"a1", ",", "a2"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Print", "[", 
+        FractionBox["b1", 
+         RowBox[{"2", "\[Pi]"}]], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Print", "[", 
+        FractionBox["b2", 
+         RowBox[{"2", "\[Pi]"}]], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Print", "[", 
+        SqrtBox[
+         RowBox[{
+          FractionBox["b2", 
+           RowBox[{"2", "\[Pi]"}]], ".", 
+          FractionBox["b2", 
+           RowBox[{"2", "\[Pi]"}]]}]], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"tableBLV", "=", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"m1", " ", "a1"}], "+", 
+               RowBox[{"m2", " ", "a2"}]}], ",", 
+              RowBox[{"{", 
+               RowBox[{"m1", ",", 
+                RowBox[{"-", "n1"}], ",", "n1"}], "}"}]}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"m2", ",", 
+              RowBox[{"-", "n2"}], ",", "n2"}], "}"}]}], "]"}], ",", "1"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"tableRLV", "=", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"m1", " ", "b1"}], "+", 
+               RowBox[{"m2", " ", "b2"}]}], ",", 
+              RowBox[{"{", 
+               RowBox[{"m1", ",", 
+                RowBox[{"-", "n1"}], ",", "n1"}], "}"}]}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"m2", ",", 
+              RowBox[{"-", "n2"}], ",", "n2"}], "}"}]}], "]"}], ",", "1"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"p0", "=", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0"}], "}"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"{", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"Graphics", "[", 
+            RowBox[{
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"Arrow", "[", 
+                RowBox[{"{", 
+                 RowBox[{"p0", ",", "a1"}], "}"}], "]"}], ",", 
+               "\[IndentingNewLine]", 
+               RowBox[{"Arrow", "[", 
+                RowBox[{"{", 
+                 RowBox[{"p0", ",", "a2"}], "}"}], "]"}], ",", 
+               "\[IndentingNewLine]", 
+               RowBox[{"{", 
+                RowBox[{"Red", ",", 
+                 RowBox[{"Point", "[", "tableBLV", "]"}]}], "}"}]}], "}"}], 
+             ",", 
+             RowBox[{
+             "PlotLabel", "\[Rule]", "\"\<Bravais lattice vectors\>\""}]}], 
+            "]"}], ",", "\[IndentingNewLine]", 
+           RowBox[{"Graphics", "[", 
+            RowBox[{
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"Arrow", "[", 
+                RowBox[{"{", 
+                 RowBox[{"p0", ",", "b1"}], "}"}], "]"}], ",", 
+               "\[IndentingNewLine]", 
+               RowBox[{"Arrow", "[", 
+                RowBox[{"{", 
+                 RowBox[{"p0", ",", "b2"}], "}"}], "]"}], ",", 
+               "\[IndentingNewLine]", 
+               RowBox[{"{", 
+                RowBox[{"Blue", ",", 
+                 RowBox[{"Point", "[", "tableRLV", "]"}]}], "}"}]}], "}"}], 
+             ",", 
+             RowBox[{
+             "PlotLabel", "\[Rule]", "\"\<Bravais lattice vectors\>\""}]}], 
+            "]"}]}], "\[IndentingNewLine]", "}"}], "}"}], "//", 
+        "TableForm"}]}]}], "\[IndentingNewLine]", "]"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.769426884383017*^9, 3.769426934045135*^9}, {
+  3.769426976516028*^9, 3.769427075794342*^9}, {3.769427140777391*^9, 
+  3.769427251087438*^9}, {3.769427281783656*^9, 3.769427370823215*^9}, {
+  3.7694274380607243`*^9, 3.7694274419637213`*^9}, {3.7694275653869057`*^9, 
+  3.7694277975083847`*^9}, {3.769427876803437*^9, 
+  3.769427971393135*^9}},ExpressionUUID->"b7b61da5-4540-4cc7-a44a-\
+712189e13d97"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plotBLVAndRLV2D", "[", 
+  RowBox[{"1", ",", "1", ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox["1", "2"], ",", 
+     FractionBox[
+      SqrtBox["3"], "2"]}], "}"}]}], "]"}]], "Input",ExpressionUUID->\
+"b6ffd41a-369b-4d55-97ff-c07fc4b529e3"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"1", ",", 
+   RowBox[{"-", 
+    FractionBox["1", 
+     SqrtBox["3"]]}]}], "}"}]], "Print",
+ CellChangeTimes->{{3.769427729682321*^9, 3.7694277999715643`*^9}, {
+   3.769427879377885*^9, 3.76942789078008*^9}, 3.769427922355279*^9, 
+   3.769427973341467*^9},ExpressionUUID->"dd0b078d-c988-44c8-8846-\
+6cf67c33f0c0"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0", ",", 
+   FractionBox["2", 
+    SqrtBox["3"]]}], "}"}]], "Print",
+ CellChangeTimes->{{3.769427729682321*^9, 3.7694277999715643`*^9}, {
+   3.769427879377885*^9, 3.76942789078008*^9}, 3.769427922355279*^9, 
+   3.769427973342774*^9},ExpressionUUID->"90e20e94-3015-4a22-86d7-\
+f0cb59255718"],
+
+Cell[BoxData[
+ FractionBox["2", 
+  SqrtBox["3"]]], "Print",
+ CellChangeTimes->{{3.769427729682321*^9, 3.7694277999715643`*^9}, {
+   3.769427879377885*^9, 3.76942789078008*^9}, 3.769427922355279*^9, 
+   3.769427973344159*^9},ExpressionUUID->"ef7a2301-abdb-48f0-87d5-\
+839215be757a"]
+}, Open  ]],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     GraphicsBox[{ArrowBox[{{0, 0}, {1, 0}}], 
+       ArrowBox[
+        NCache[{{0, 0}, {Rational[1, 2], Rational[1, 2] 3^Rational[1, 2]}}, {{
+          0, 0}, {0.5, 0.8660254037844386}}]], {
+        {RGBColor[1, 0, 0], 
+         PointBox[
+          NCache[{{Rational[-3, 2], Rational[-1, 2] 3^Rational[1, 2]}, {
+            Rational[-1, 2], Rational[-1, 2] 3^Rational[1, 2]}, {
+            Rational[1, 2], Rational[-1, 2] 3^Rational[1, 2]}, {-1, 0}, {0, 
+            0}, {1, 0}, {Rational[-1, 2], Rational[1, 2] 3^Rational[1, 2]}, {
+            Rational[1, 2], Rational[1, 2] 3^Rational[1, 2]}, {
+            Rational[3, 2], Rational[1, 2] 
+             3^Rational[
+               1, 2]}}, {{-1.5, -0.8660254037844386}, {-0.5, \
+-0.8660254037844386}, {0.5, -0.8660254037844386}, {-1, 0}, {0, 0}, {1, 
+            0}, {-0.5, 0.8660254037844386}, {0.5, 0.8660254037844386}, {1.5, 
+            0.8660254037844386}}]]}}},
+      PlotLabel->FormBox["\"Bravais lattice vectors\"", TraditionalForm]], 
+     GraphicsBox[{
+       ArrowBox[
+        NCache[{{0, 0}, {2 Pi, (-2) 3^Rational[-1, 2] Pi}}, {{0, 0}, {
+          6.283185307179586, -3.627598728468436}}]], 
+       ArrowBox[
+        NCache[{{0, 0}, {0, 4 3^Rational[-1, 2] Pi}}, {{0, 0}, {
+          0, 7.255197456936872}}]], {
+        {RGBColor[0, 0, 1], 
+         PointBox[
+          NCache[{{(-2) Pi, (-2) 3^Rational[-1, 2] Pi}, {
+            0, (-4) 3^Rational[-1, 2] Pi}, {
+            2 Pi, (-2) 3^Rational[1, 2] Pi}, {(-2) Pi, 2 3^Rational[-1, 2] 
+             Pi}, {0, 0}, {
+            2 Pi, (-2) 3^Rational[-1, 2] Pi}, {(-2) Pi, 2 3^Rational[1, 2] 
+             Pi}, {0, 4 3^Rational[-1, 2] Pi}, {
+            2 Pi, 2 3^Rational[-1, 2] 
+             Pi}}, {{-6.283185307179586, -3.627598728468436}, {
+            0, -7.255197456936872}, {
+            6.283185307179586, -10.882796185405306`}, {-6.283185307179586, 
+            3.627598728468436}, {0, 0}, {
+            6.283185307179586, -3.627598728468436}, {-6.283185307179586, 
+            10.882796185405306`}, {0, 7.255197456936872}, {6.283185307179586, 
+            3.627598728468436}}]]}}},
+      PlotLabel->FormBox["\"Bravais lattice vectors\"", TraditionalForm]]}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[2.0999999999999996`]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.7694276864097137`*^9, 3.7694277999767857`*^9}, {
+   3.769427879385042*^9, 3.769427890784794*^9}, 3.769427922371743*^9, 
+   3.769427973347416*^9},ExpressionUUID->"c9a26d9b-a177-4c6e-ba04-\
+c9396d8d54d6"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plotBLVAndRLV2D", "[", 
+  RowBox[{"1", ",", "1", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox["1", "2"], ",", 
+     FractionBox[
+      SqrtBox["3"], "2"]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox["1", "2"], ",", 
+     RowBox[{"-", 
+      FractionBox[
+       SqrtBox["3"], "2"]}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.769427227446062*^9, 3.769427244189399*^9}, 
+   3.7694276850317497`*^9, {3.769427833819092*^9, 
+   3.76942785279534*^9}},ExpressionUUID->"32d51708-379b-4bad-9801-\
+9197fb6e8a19"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"1", ",", 
+   FractionBox["1", 
+    SqrtBox["3"]]}], "}"}]], "Print",
+ CellChangeTimes->{{3.7694278474713984`*^9, 3.7694278530275106`*^9}, 
+   3.7694278940803223`*^9, 3.769427925027501*^9, 
+   3.7694279749501657`*^9},ExpressionUUID->"cd20eeaf-cfc9-4df2-b2d3-\
+0606f4ce6e83"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"1", ",", 
+   RowBox[{"-", 
+    FractionBox["1", 
+     SqrtBox["3"]]}]}], "}"}]], "Print",
+ CellChangeTimes->{{3.7694278474713984`*^9, 3.7694278530275106`*^9}, 
+   3.7694278940803223`*^9, 3.769427925027501*^9, 
+   3.769427974951398*^9},ExpressionUUID->"e7d47020-99e4-45a4-9dc9-\
+77314d91a3a7"],
+
+Cell[BoxData[
+ FractionBox["2", 
+  SqrtBox["3"]]], "Print",
+ CellChangeTimes->{{3.7694278474713984`*^9, 3.7694278530275106`*^9}, 
+   3.7694278940803223`*^9, 3.769427925027501*^9, 
+   3.769427974952573*^9},ExpressionUUID->"cbcaa757-dc79-4c91-9265-\
+f5e1ea347319"]
+}, Open  ]],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     GraphicsBox[{
+       ArrowBox[
+        NCache[{{0, 0}, {Rational[1, 2], Rational[1, 2] 3^Rational[1, 2]}}, {{
+          0, 0}, {0.5, 0.8660254037844386}}]], 
+       ArrowBox[
+        NCache[{{0, 0}, {
+          Rational[1, 2], Rational[-1, 2] 3^Rational[1, 2]}}, {{0, 0}, {
+          0.5, -0.8660254037844386}}]], {
+        {RGBColor[1, 0, 0], 
+         PointBox[
+          NCache[{{-1, 0}, {
+            Rational[-1, 2], Rational[1, 2] 3^Rational[1, 2]}, {
+            0, 3^Rational[1, 2]}, {
+            Rational[-1, 2], Rational[-1, 2] 3^Rational[1, 2]}, {0, 0}, {
+            Rational[1, 2], Rational[1, 2] 3^Rational[1, 2]}, {
+            0, -3^Rational[1, 2]}, {
+            Rational[1, 2], Rational[-1, 2] 3^Rational[1, 2]}, {1, 0}}, {{-1, 
+            0}, {-0.5, 0.8660254037844386}, {
+            0, 1.7320508075688772`}, {-0.5, -0.8660254037844386}, {0, 0}, {
+            0.5, 0.8660254037844386}, {0, -1.7320508075688772`}, {
+            0.5, -0.8660254037844386}, {1, 0}}]]}}},
+      PlotLabel->FormBox["\"Bravais lattice vectors\"", TraditionalForm]], 
+     GraphicsBox[{
+       ArrowBox[
+        NCache[{{0, 0}, {2 Pi, 2 3^Rational[-1, 2] Pi}}, {{0, 0}, {
+          6.283185307179586, 3.627598728468436}}]], 
+       ArrowBox[
+        NCache[{{0, 0}, {2 Pi, (-2) 3^Rational[-1, 2] Pi}}, {{0, 0}, {
+          6.283185307179586, -3.627598728468436}}]], {
+        {RGBColor[0, 0, 1], 
+         PointBox[
+          NCache[{{(-4) Pi, 0}, {(-2) Pi, 2 3^Rational[-1, 2] Pi}, {
+            0, 4 3^Rational[-1, 2] Pi}, {(-2) Pi, (-2) 3^Rational[-1, 2] 
+             Pi}, {0, 0}, {2 Pi, 2 3^Rational[-1, 2] Pi}, {
+            0, (-4) 3^Rational[-1, 2] Pi}, {
+            2 Pi, (-2) 3^Rational[-1, 2] Pi}, {
+            4 Pi, 0}}, {{-12.566370614359172`, 0}, {-6.283185307179586, 
+            3.627598728468436}, {
+            0, 7.255197456936872}, {-6.283185307179586, -3.627598728468436}, {
+            0, 0}, {6.283185307179586, 3.627598728468436}, {
+            0, -7.255197456936872}, {6.283185307179586, -3.627598728468436}, {
+            12.566370614359172`, 0}}]]}}},
+      PlotLabel->FormBox["\"Bravais lattice vectors\"", TraditionalForm]]}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[2.0999999999999996`]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{
+  3.7694276832698383`*^9, {3.76942784747475*^9, 3.769427853031254*^9}, 
+   3.769427894083362*^9, 3.769427925041688*^9, 
+   3.769427974954081*^9},ExpressionUUID->"683660fb-240d-4eeb-bd1a-\
+e39092f1f0f4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"plotBLVAndRLV2D", "[", 
+  RowBox[{"1", ",", "1", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox[
+      SqrtBox["3"], "2"], ",", 
+     FractionBox["1", "2"]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox[
+      SqrtBox["3"], "2"], ",", 
+     RowBox[{"-", 
+      FractionBox["1", "2"]}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7694280041660557`*^9, 
+  3.769428010998227*^9}},ExpressionUUID->"d703270b-040b-44d7-9a9e-\
+61b691197263"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   FractionBox["1", 
+    SqrtBox["3"]], ",", "1"}], "}"}]], "Print",
+ CellChangeTimes->{
+  3.7694280112435427`*^9},ExpressionUUID->"42078e06-8d86-47a0-9837-\
+bb63b6b0b505"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   FractionBox["1", 
+    SqrtBox["3"]], ",", 
+   RowBox[{"-", "1"}]}], "}"}]], "Print",
+ CellChangeTimes->{
+  3.769428011244771*^9},ExpressionUUID->"9b5254f9-1765-4cf7-82a0-\
+d17e1bada339"],
+
+Cell[BoxData[
+ FractionBox["2", 
+  SqrtBox["3"]]], "Print",
+ CellChangeTimes->{
+  3.769428011246669*^9},ExpressionUUID->"c4451617-ecb9-448d-bf00-\
+cca463202d59"]
+}, Open  ]],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {
+     GraphicsBox[{
+       ArrowBox[
+        NCache[{{0, 0}, {Rational[1, 2] 3^Rational[1, 2], Rational[1, 2]}}, {{
+          0, 0}, {0.8660254037844386, 0.5}}]], 
+       ArrowBox[
+        NCache[{{0, 0}, {
+          Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}}, {{0, 0}, {
+          0.8660254037844386, -0.5}}]], {
+        {RGBColor[1, 0, 0], 
+         PointBox[
+          NCache[{{-3^Rational[1, 2], 0}, {
+            Rational[-1, 2] 3^Rational[1, 2], Rational[1, 2]}, {0, 1}, {
+            Rational[-1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {0, 0}, {
+            Rational[1, 2] 3^Rational[1, 2], Rational[1, 2]}, {0, -1}, {
+            Rational[1, 2] 3^Rational[1, 2], Rational[-1, 2]}, {
+            3^Rational[1, 2], 0}}, {{-1.7320508075688772`, 
+             0}, {-0.8660254037844386, 0.5}, {0, 
+            1}, {-0.8660254037844386, -0.5}, {0, 0}, {0.8660254037844386, 
+            0.5}, {0, -1}, {0.8660254037844386, -0.5}, {
+            1.7320508075688772`, 0}}]]}}},
+      PlotLabel->FormBox["\"Bravais lattice vectors\"", TraditionalForm]], 
+     GraphicsBox[{
+       ArrowBox[
+        NCache[{{0, 0}, {2 3^Rational[-1, 2] Pi, 2 Pi}}, {{0, 0}, {
+          3.627598728468436, 6.283185307179586}}]], 
+       ArrowBox[
+        NCache[{{0, 0}, {2 3^Rational[-1, 2] Pi, (-2) Pi}}, {{0, 0}, {
+          3.627598728468436, -6.283185307179586}}]], {
+        {RGBColor[0, 0, 1], 
+         PointBox[
+          NCache[{{(-4) 3^Rational[-1, 2] Pi, 0}, {(-2) 3^Rational[-1, 2] Pi, 
+             2 Pi}, {0, 4 Pi}, {(-2) 3^Rational[-1, 2] Pi, (-2) Pi}, {0, 0}, {
+            2 3^Rational[-1, 2] Pi, 2 Pi}, {0, (-4) Pi}, {
+            2 3^Rational[-1, 2] Pi, (-2) Pi}, {
+            4 3^Rational[-1, 2] Pi, 0}}, {{-7.255197456936872, 
+             0}, {-3.627598728468436, 6.283185307179586}, {
+            0, 12.566370614359172`}, {-3.627598728468436, \
+-6.283185307179586}, {0, 0}, {3.627598728468436, 6.283185307179586}, {
+            0, -12.566370614359172`}, {
+            3.627598728468436, -6.283185307179586}, {
+            7.255197456936872, 0}}]]}}},
+      PlotLabel->FormBox["\"Bravais lattice vectors\"", TraditionalForm]]}
+   },
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}},
+   GridBoxSpacings->{"Columns" -> {
+       Offset[0.27999999999999997`], {
+        Offset[2.0999999999999996`]}, 
+       Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+       Offset[0.2], {
+        Offset[0.4]}, 
+       Offset[0.2]}, "RowsIndexed" -> {}}],
+  Function[BoxForm`e$, 
+   TableForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{
+  3.76942801124888*^9},ExpressionUUID->"a8e82d6c-e736-4a3a-aef7-dbe042238369"]
+}, Open  ]]
+},
+WindowSize->{1855, 1028},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"11.1 for Linux x86 (64-bit) (March 13, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 2034, 63, 341, "Input", "ExpressionUUID" -> \
+"f799e1f9-59dd-4dd3-adf0-14c7287c67b7"],
+Cell[2617, 87, 332, 9, 56, "Output", "ExpressionUUID" -> \
+"1056aa9f-e052-49bd-bbd3-9003da8bacc7"],
+Cell[2952, 98, 352, 10, 56, "Output", "ExpressionUUID" -> \
+"6a71d84f-eaad-4f6d-b8a0-8f8eb7e09f3f"],
+Cell[3307, 110, 276, 6, 34, "Output", "ExpressionUUID" -> \
+"859d8477-08e2-4e8f-b272-f2992090ce03"],
+Cell[3586, 118, 312, 8, 55, "Output", "ExpressionUUID" -> \
+"25b4d274-107c-4026-a0c8-1d211f14740e"],
+Cell[3901, 128, 329, 9, 55, "Output", "ExpressionUUID" -> \
+"7cad70ab-0c7a-4133-9148-738888b1a5bc"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4267, 142, 2221, 60, 284, "Input", "ExpressionUUID" -> \
+"7dd2ec67-0894-4b17-a57b-486a0470f68c"],
+Cell[6491, 204, 2576, 46, 229, "Output", "ExpressionUUID" -> \
+"7804ca7b-a2ce-4134-bc29-f27720f6129d"]
+}, Open  ]],
+Cell[9082, 253, 1919, 53, 193, "Input", "ExpressionUUID" -> \
+"9e78649a-7c07-40eb-a5db-0b71a551054b"],
+Cell[CellGroupData[{
+Cell[11026, 310, 400, 8, 34, "Input", "ExpressionUUID" -> \
+"39d25ed6-4623-43f3-acd2-25cbedfb660d"],
+Cell[11429, 320, 1906, 35, 447, "Output", "ExpressionUUID" -> \
+"c3669717-6f41-4268-942f-92d969af294a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13372, 360, 252, 6, 34, "Input", "ExpressionUUID" -> \
+"07225638-b3fa-4822-877e-e3ec2b0bcd19"],
+Cell[13627, 368, 855, 16, 447, "Output", "ExpressionUUID" -> \
+"0c90b932-d443-4aa3-a5fd-556d48023551"]
+}, Open  ]],
+Cell[14497, 387, 6486, 167, 846, "Input", "ExpressionUUID" -> \
+"b7b61da5-4540-4cc7-a44a-712189e13d97"],
+Cell[CellGroupData[{
+Cell[21008, 558, 330, 10, 57, "Input", "ExpressionUUID" -> \
+"b6ffd41a-369b-4d55-97ff-c07fc4b529e3"],
+Cell[CellGroupData[{
+Cell[21363, 572, 351, 9, 47, "Print", "ExpressionUUID" -> \
+"dd0b078d-c988-44c8-8846-6cf67c33f0c0"],
+Cell[21717, 583, 330, 8, 47, "Print", "ExpressionUUID" -> \
+"90e20e94-3015-4a22-86d7-f0cb59255718"],
+Cell[22050, 593, 281, 6, 47, "Print", "ExpressionUUID" -> \
+"ef7a2301-abdb-48f0-87d5-839215be757a"]
+}, Open  ]],
+Cell[22346, 602, 2915, 61, 247, "Output", "ExpressionUUID" -> \
+"c9a26d9b-a177-4c6e-ba04-c9396d8d54d6"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25298, 668, 560, 17, 57, "Input", "ExpressionUUID" -> \
+"32d51708-379b-4bad-9801-9197fb6e8a19"],
+Cell[CellGroupData[{
+Cell[25883, 689, 313, 8, 47, "Print", "ExpressionUUID" -> \
+"cd20eeaf-cfc9-4df2-b2d3-0606f4ce6e83"],
+Cell[26199, 699, 332, 9, 47, "Print", "ExpressionUUID" -> \
+"e7d47020-99e4-45a4-9dc9-77314d91a3a7"],
+Cell[26534, 710, 262, 6, 47, "Print", "ExpressionUUID" -> \
+"cbcaa757-dc79-4c91-9265-f5e1ea347319"]
+}, Open  ]],
+Cell[26811, 719, 2891, 63, 247, "Output", "ExpressionUUID" -> \
+"683660fb-240d-4eeb-bd1a-e39092f1f0f4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[29739, 787, 487, 16, 57, "Input", "ExpressionUUID" -> \
+"d703270b-040b-44d7-9a9e-61b691197263"],
+Cell[CellGroupData[{
+Cell[30251, 807, 212, 7, 47, "Print", "ExpressionUUID" -> \
+"42078e06-8d86-47a0-9837-bb63b6b0b505"],
+Cell[30466, 816, 229, 8, 47, "Print", "ExpressionUUID" -> \
+"9b5254f9-1765-4cf7-82a0-d17e1bada339"],
+Cell[30698, 826, 161, 5, 47, "Print", "ExpressionUUID" -> \
+"c4451617-ecb9-448d-bf00-cca463202d59"]
+}, Open  ]],
+Cell[30874, 834, 2745, 59, 280, "Output", "ExpressionUUID" -> \
+"a8e82d6c-e736-4a3a-aef7-dbe042238369"]
+}, Open  ]]
+}
+]
+*)
+

@@ -1,0 +1,12 @@
+**/logs
+*.log
+*.out
+*.svg
+*.npy 
+#numpy arra files
+SimulationResults/
+plots/
+results/
+*.h5
+*.mp4
+*.png

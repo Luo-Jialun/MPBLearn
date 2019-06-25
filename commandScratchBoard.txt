@@ -1,0 +1,65 @@
+h5topng -t 0:1065    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-broadbandSource_ez_line-defects.h5
+ffmpeg -framerate 8 -i *.png -c:v libx264 -r 30 out.mp4
+
+/home/fuchs-mumax/Projects/MPBLearn/results/meepTrigLatCylAirHole/meepPointDefect-broadbandSource_ez.h5
+
+
+ffmpeg -framerate 8 -i *.png -c:v libx264 -r 30 out.mp4
+
+ffmpeg -framerate 8 -i meepPointDefect-broadbandSource_ez_line-defects.t%04d.png -c:v libx264 -preset ultrafast -crf 0  out.mp4
+-c:v huffyuv
+
+
+meepPointDefect-broadbandSource_ez_line-defects.h5
+
+h5topng  meepPointDefect-eps-000000.00.h5
+
+
+h5topng -t 0:2559    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-broadbandSource_ez_line-defects.h5
+
+ffmpeg -framerate 8 -i meepPointDefect-narrowbandSource-Offcenter_ez_line-defects.t%04d.png -c:v libx264   -preset veryslow -crf 0  meepPointDefect-lineDefect_f0-0.4_df-0.02_veryslow-codec.mp4
+
+
+h5topng -t 500:1000    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-narrowbandSource-Offcenter_ez_line-defects.h5
+
+h5topng -t 400:1400    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-narrowbandSource-Offcenter_ez_line-defects.h5
+
+meepPointDefect-narrowbandSource-Offcenter_ez_line-defects.h5
+
+2560
+
+h5ls meepPointDefect-broadbandSource_ez_line-defects.h5
+h5topng -t 500:1000    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-broadbandSource_ez_line-defects.h5
+
+ffmpeg -framerate 8 -start_number 500 -i meepPointDefect-broadbandSource_ez_line-defects.t%04d.png  -c:v libx264   -preset veryslow -crf 0  lineDefect_flux_f0-0.4_df-0.02_veryslow-codec.mp4 
+
+
+h5topng -t 500:1100    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-wvg_cavity_flux_ez.h5
+
+ffmpeg -framerate 8 -start_number 500 -i meepPointDefect-wvg_cavity_flux_ez.t%03d.png  -c:v libx264   -preset veryslow -crf 0  lineDefect_flux_f0-0.4_df-0.02_veryslow-codec.mp4 
+
+meepPointDefect-wvg_cavity_flux_2_ez.t599.png
+
+ffmpeg -framerate 8 -start_number 500 -i meepPointDefect-wvg_cavity_flux_ez.t%03d.png  -c:v libx264   -preset veryslow -crf 0  <Name>mp4 
+
+ffmpeg -framerate 8 -i meepPointDefect-wvg_cavity_flux_2_ez.t%03d.png  -c:v libx264   -preset veryslow -crf 0  wvg_cavity_flux_2_ez.mp4 
+
+
+ffmpeg -framerate 8 -i meepPointDefect-wvg_cavity_flux_2_ez.t%04d.png -c:v libx264   -preset veryslow -crf 0  f-0.435_wvg_cav_flux_2.ez.mp4 
+meepPointDefect-wvg_cavity_flux_2_ez.t1500.png
+
+meepPointDefect-wvg_cavity_flux_ez.h5
+
+
+
+/home/fuchs-mumax/Projects/MPBLearn/results/meepTrigLatCylAirHole/meepPointDefect-wvg_cavity_flux_1_ez.h5
+h5topng -t 0:1422    -R  -S 2 -Zc dkbluered -A meepPointDefect-eps-000000.00.h5 meepPointDefect-wvg_no_cavity_flux_1_ez.h5
+h5ls meepPointDefect-wvg_cavity_flux_1_ez.h5
+meepPointDefect-wvg_no_cavity_flux_1_ez.h5
+
+
+ffmpeg -framerate 8 -i meepPointDefect-wvg_no_cavity_flux_1_ez.t%04d.png  -c:v libx264   -preset veryslow -crf 0  horizontal_waveguide.mp4 
+
+h5topng -t 0:1244    -R  -S 2 -Zc dkbluered -A meepPointDefect-wvg_no_cavity_flux_1_eps.h5 meepPointDefect-wvg_no_cavity_flux_1_ez.h5
+
+meepPointDefect-wvg_no_cavity_flux_1_ez.h5
