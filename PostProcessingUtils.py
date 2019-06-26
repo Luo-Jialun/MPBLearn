@@ -147,11 +147,10 @@ def PlotDielectricMap(epsH5filename, suppressInfo= False, isDebugging=False):
 if __name__ == '__main__':
     defaultWorkingDirectory = './results/meepTrigLatCylAirHole'
     defaultPythonScriptName = 'bridge_wvg_cavity'  
-
     
     parser = argparse.ArgumentParser(description="Utilities to process h5 outputs and flux tables from the meep simulation")
     parser.add_argument('-p', "--plot-transmission", nargs='+', help="Plot transmission given a reference flux (first file) and the test setup flux data (second file)")
-    parser.add_argument("--make-movie", help="Make time domain simulation movie given the field evolution h5 file (and optionally) an overlay dielectric map")
+    parser.add_argument("--make-movie", nargs=2, help="Make time domain simulation movie given the field evolution h5 file (must be the first file) (and optionally) an overlay dielectric map (second file)")
     parser.add_argument('-s', "--sim-file-prefix", help="Name of the python script which runs the meep simulation", default=defaultPythonScriptName)
     
     args = parser.parse_args()
@@ -159,15 +158,10 @@ if __name__ == '__main__':
     print(args)
 
     resultDirectory = defaultWorkingDirectory
-
-
-
     if args.plot_transmission:
         print(f'Here I should plot transmission and save it')
         print(f'the reference is {args.plot_transmission[0]}')
         print(f'The following are test setup data')
-        # for filename in args.plot_transmission[1:]:
-        #     print(f'{filename}')
         
         testDataFilenames = []
         legends = []
@@ -194,32 +188,10 @@ if __name__ == '__main__':
         PlotTransmission(args.plot_transmission[0], testDataFilenames, workingDirectory=defaultWorkingDirectory, legends = legends)
 
 
-    """ Test PlotDielectricMap """
-    # h5EpsilonFilename = f'{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
-    # PlotDielectricMap(f'{workingDirectory}/{h5EpsilonFilename}')
-
-
-    """ Test PlotTransmission() """
-    # measurementTrFile = 'flux_testFlux_cavity_N-3.csv' 
-    # refFile = 'flux_testFlux_no_cavity.csv'
-    # plotTransmission(refFile, measurementTrFile, workingDirectory=workingDirectory)
-
-    # print(np.divide(np.array([5, 4, 3, 2, 1]), np.array([1, 2, 3, 4, 5])))
-
-    # fRef = 'wvg_with_no_cavity_1_fluxParam_fcen-0.435_df-0.05_flux.csv'
-    # fActive = 'wvg_with_cavity_1_fluxParam_fcen-0.435_df-0.05_flux.csv'
-
-    # fActive = 'wvg_with_cavity-1_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    # fActive = 'wvg_with_cavity-2_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    # fActive =   'wvg_with_cavity-1_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    fRef =      'wvg_with_no_cavity_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    # PlotTransmission(fRef, fActive, workingDirectory=workingDirectory)
-    # exit()
-
-
-    # epsLocalName = 'bridge_wvg_cavity-wvg_with_cavity-3_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
-    # ezLocalName = 'bridge_wvg_cavity-wvg_with_cavity-3_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_ez.h5'
-
-    # h5Filename = f'{workingDirectory}/{ezLocalName}'
-    # overlayh5Filename = f'{workingDirectory}/{epsLocalName}'
-    # HDF2DImageTimeSeriesToMovie(h5Filename, overlayh5Filename=overlayh5Filename, isDebugging = True)
+    if args.make_movie:
+        ezLocalName  = args.make_movie[0]
+        epsLocalName = args.make_movie[1]
+        
+        h5Filename = f'{workingDirectory}/{ezLocalName}'
+        overlayh5Filename = f'{workingDirectory}/{epsLocalName}'
+        HDF2DImageTimeSeriesToMovie(h5Filename, overlayh5Filename=overlayh5Filename)
