@@ -15,7 +15,7 @@ import sys
 import subprocess
 
 
-def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, SidebankThickness = 1.0):
+def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0):
     computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
 
     materialHBN = mp.Medium(epsilon=eps)
@@ -37,16 +37,25 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
                                         basis2 = basis2)
 
 
-    hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + SidebankThickness, computeCellSizeY), 
+    hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
             material = materialHBN, 
-            center = mp.Vector3((PMLThickness + SidebankThickness)/2-computeCellSizeX/2, 0))
-    hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + SidebankThickness, computeCellSizeY), 
+            center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
+    hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
             material = materialHBN, 
-            center = mp.Vector3(- (PMLThickness + SidebankThickness)/2 + computeCellSizeX/2, 0))
+            center = mp.Vector3(- (PMLThickness + sidebankThickness)/2 + computeCellSizeX/2, 0))
+    hBNBridge = mp.Block(mp.Vector3(computeCellSizeX, bridgeWidth), material = materialHBN)
 
+    geometryAssembly = []
 
+    """ banks """
+    geometryAssembly.append(hBNSidebankLeft) 
+    geometryAssembly.append(hBNSidebankRight)
+    geometryAssembly.append(hBNBridge)
 
-    geometryAssembly = mp.geometric_objects_lattice_duplicates(geometryLattice, [airCylinder])
+    """ """
+    airHoles = mp.geometric_objects_lattice_duplicates(geometryLattice, [airCylinder])
+    for hole in airHoles:
+      geometryAssembly.append(hole)
     
     # for gobject in geometryAssembly:
     #     print(f'{gobject} at {gobject.center} with material={gobject.material}')
@@ -66,9 +75,6 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
 
     """ make a defect point at the center"""
     geometryAssembly.append(hBNCylinder)            
-
-    """ banks """
-    geometryAssembly.append(hBNSidebankLeft) 
 
 
     # for gobject in geometryAssembly:
@@ -118,9 +124,11 @@ if __name__ == '__main__':
 
     parser.add_argument('--make-cavity', dest='myFunction')
 
+    pythonScriptName = 'bridge_wvg_cavity'
+
     PMLThickness = 1.0
-    eps0=4.84
-    r0=0.382
+    eps0 = 4.84
+    r0 = 0.382
     f0 = 0.43569
     df = 0.05
     framerate = 8
@@ -131,14 +139,17 @@ if __name__ == '__main__':
     simDomainSizeY = 10
     cavityUnitCellCount = 3
 
-    nfreq = 2000 # number of frequencies at which to compute flux
+    bridgeWidth = unitCellCountY
 
+    isMakingCavity = True
+
+    """ Analysis parameters """
+    nfreq = 2000 # number of frequencies at which to compute flux
     fluxDF = 0.1
     fluxFcen = 0.435
     harminvDf = 0.1
     harminvF0 = 0.4
 
-    isMakingCavity = False
 
 
     """ setup the geometry lattice """
@@ -164,7 +175,7 @@ if __name__ == '__main__':
     defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
 
 
-    sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount)
+    sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth)
     sim.init_sim()
 
 
@@ -179,8 +190,8 @@ if __name__ == '__main__':
     epsMapFileBasename = f'{runDescription}_eps'
     fluxFileBasename = f'{runDescription}_flux'
 
-    epsMapH5Filename = f'{defaultResultFolder}/meepPointDefect-{epsMapFileBasename}.h5'
-    fieldH5Filename = f'{defaultResultFolder}/meepPointDefect-{fieldFileBasename}.h5'
+    epsMapH5Filename = f'{defaultResultFolder}/{pythonScriptName}-{epsMapFileBasename}.h5'
+    fieldH5Filename = f'{defaultResultFolder}/{pythonScriptName}-{fieldFileBasename}.h5'
 
     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(simDomainSizeX/2 - PMLThickness * 1.1, 0), f0, harminvDf)),
                 mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),

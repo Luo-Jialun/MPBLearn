@@ -114,18 +114,19 @@ def PlotDielectricMap(epsH5filename, suppressInfo= False, isDebugging=False):
 
     plt.savefig(svgFilename)
     print(f'Use the following command to open:')
-    print(f'eog {svgFilename}')
+    print(f'eog {svgFilename}&')
 
 
 
 if __name__ == '__main__':
 
     workingDirectory = './results/meepTrigLatCylAirHole'
-
+    pythonScriptName = 'bridge_wvg_cavity'  
     """ Test PlotDielectricMap """
-    h5EpsilonFilename = 'meepPointDefect-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
+    
+    # h5EpsilonFilename = f'{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
 
-    PlotDielectricMap(f'{workingDirectory}/{h5EpsilonFilename}')
+    # PlotDielectricMap(f'{workingDirectory}/{h5EpsilonFilename}')
 
 
 
@@ -140,11 +141,10 @@ if __name__ == '__main__':
 
     # fActive = 'wvg_with_cavity-1_fluxParam_fcen-0.435_df-0.1_flux.csv'
     # fActive = 'wvg_with_cavity-2_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    # fActive = 'wvg_with_cavity-3_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    # fRef = 'meepPointDefect-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_ez.h5'
-    # PlotTransmission(fRef, fActive, workingDirectory=workingDirectory)
-
+    fActive = 'wvg_with_cavity-3_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
+    fRef = 'wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
+    PlotTransmission(fRef, fActive, workingDirectory=workingDirectory)
     
-    # h5Filename = f'{workingDirectory}/meepPointDefect-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_ez.h5'
-    # overlayh5Filename = f'{workingDirectory}/meepPointDefect-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
+    # h5Filename = f'{workingDirectory}/{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_ez.h5'
+    # overlayh5Filename = f'{workingDirectory}/{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
     # HDF2DImageTimeSeriesToMovie(h5Filename, overlayh5Filename=overlayh5Filename, isDebugging = True)

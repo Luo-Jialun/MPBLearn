@@ -15,7 +15,7 @@ import sys
 import subprocess
 
 
-def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, SidebankThickness = 1.0):
+def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0):
     computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
 
     materialHBN = mp.Medium(epsilon=eps)
@@ -37,12 +37,12 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
                                         basis2 = basis2)
 
 
-    hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + SidebankThickness, computeCellSizeY), 
+    hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
             material = materialHBN, 
-            center = mp.Vector3((PMLThickness + SidebankThickness)/2-computeCellSizeX/2, 0))
-    hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + SidebankThickness, computeCellSizeY), 
+            center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
+    hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
             material = materialHBN, 
-            center = mp.Vector3(- (PMLThickness + SidebankThickness)/2 + computeCellSizeX/2, 0))
+            center = mp.Vector3(- (PMLThickness + sidebankThickness)/2 + computeCellSizeX/2, 0))
 
 
 
