@@ -1,3 +1,5 @@
+#!/opt/anaconda3/bin/python
+
 """
 Author: Jialun Luo
 Calculate time resolved field propagation of some photonic crystal structure
@@ -129,19 +131,20 @@ if __name__ == '__main__':
     PMLThickness = 1.0
     eps0 = 4.84
     r0 = 0.382
-    f0 = 0.43569
+    f0 = 0.4319
     df = 0.05
     framerate = 8
     unitCellCountX = 40
-    unitCellCountY = 5
+    unitCellCountY = 3
 
     simDomainSizeX = 20
     simDomainSizeY = 10
-    cavityUnitCellCount = 3
 
     bridgeWidth = unitCellCountY
+    cavityUnitCellCount = 1
 
-    isMakingCavity = True
+    # isMakingCavity = True
+    isMakingCavity = False
 
     """ Analysis parameters """
     nfreq = 2000 # number of frequencies at which to compute flux
@@ -160,103 +163,102 @@ if __name__ == '__main__':
                                     basis1 = basis1,
                                     basis2 = basis2)
 
-    """ run with flux calculation """ 
+    """ run with flux calculation """
     # print(f'{mp.lattice_to_cartesian(mp.Vector3(0,1,0), geometryLattice)}')
     fluxCutline = mp.FluxRegion(center=mp.lattice_to_cartesian(mp.Vector3(9,0), geometryLattice), size=mp.Vector3(0, 1), direction = mp.X)
 
-    """ I don't seem to be able to calculate the flux in the commented out direction"""
+    for cavityUnitCellCount in np.arange(1,10,1):
+        for isMakingCavity in [True, False]:
+            """ I don't seem to be able to calculate the flux in the commented out direction"""
+            if(isMakingCavity):
+                runDescription = f'wvg_with_cavity-{cavityUnitCellCount}_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
+            else:
+                runDescription = f'wvg_with_no_cavity_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
 
-    if(isMakingCavity):
-        runDescription = f'wvg_with_cavity-{cavityUnitCellCount}_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
-    else:
-        runDescription = f'wvg_with_no_cavity_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
+            defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
+
+            sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth)
+            sim.init_sim()
 
 
-    defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
+            sim.use_output_directory(defaultResultFolder)
+            """ Try a narrow source outside of the patterned region"""
+            # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(), f0, df)), until_after_sources = 400)
 
+            """ add_flux for calculate flux """
+            trans = sim.add_flux(fluxFcen, fluxDF, nfreq, fluxCutline)
 
-    sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth)
-    sim.init_sim()
+            fieldFileBasename = f'{runDescription}_ez'
+            epsMapFileBasename = f'{runDescription}_eps'
+            fluxFileBasename = f'{runDescription}_flux'
 
+            epsMapH5Filename = f'{defaultResultFolder}/{pythonScriptName}-{epsMapFileBasename}.h5'
+            fieldH5Filename = f'{defaultResultFolder}/{pythonScriptName}-{fieldFileBasename}.h5'
 
-    sim.use_output_directory(defaultResultFolder)
-    """ Try a narrow source outside of the patterned region"""
-    # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(), f0, df)), until_after_sources = 400)
-
-    """ add_flux for calculate flux """
-    trans = sim.add_flux(fluxFcen, fluxDF, nfreq, fluxCutline)
-
-    fieldFileBasename = f'{runDescription}_ez'
-    epsMapFileBasename = f'{runDescription}_eps'
-    fluxFileBasename = f'{runDescription}_flux'
-
-    epsMapH5Filename = f'{defaultResultFolder}/{pythonScriptName}-{epsMapFileBasename}.h5'
-    fieldH5Filename = f'{defaultResultFolder}/{pythonScriptName}-{fieldFileBasename}.h5'
-
-    sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(simDomainSizeX/2 - PMLThickness * 1.1, 0), f0, harminvDf)),
-                mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
-                mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
-                # until=500)
-                # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
-                until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-2))
-    print(f'Run description: {runDescription}')
-   
-    with open(f'{defaultResultFolder}/{fluxFileBasename}.csv', 'w') as csvrecord:
-        originalStdout = sys.stdout
-        print('point stdout to a file')
-        sys.stdout = csvrecord
+            sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(simDomainSizeX/2 - PMLThickness * 1.1, 0), f0, harminvDf)),
+                        mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
+                        mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
+                        # until=500)
+                        # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
+                        until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-2))
+            print(f'Run description: {runDescription}')
         
-        sim.display_fluxes(trans)  # print out the flux spectrum
-        sys.stdout = originalStdout
-        print('print back to the real stdout')
+            with open(f'{defaultResultFolder}/{fluxFileBasename}.csv', 'w') as csvrecord:
+                originalStdout = sys.stdout
+                print('point stdout to a file')
+                sys.stdout = csvrecord
+                
+                sim.display_fluxes(trans)  # print out the flux spectrum
+                sys.stdout = originalStdout
+                print('print back to the real stdout')
 
-    """ Convert the eps map h5 file into a png file"""
-    PPU.PlotDielectricMap(epsMapH5Filename)
-
-
-    # PPU.HDF2DImageTimeSeriesToMovie(fieldH5Filename, overlayh5Filename=epsMapH5Filename)
-
-
-    # sim.run(mp.at_every(0.6 , mp.output_png(mp.Ez, "-Zc dkbluered")), until=200)
-
-    # fcenterAnal = f0
-    # moviePeriod = 2
-    # fBandwidth=0.8 * f0
-    # sim.reset_meep()
-    # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)),
-    #     mp.at_beginning(mp.output_epsilon),
-    #     mp.to_appended("ez", mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
-    #     until_after_sources = 300)
-    # sys.stdout.close()
-    # sys.stdout = originalStdout
-
-    # sim.run(mp.at_beginning(mp.output_epsilon), until_after_sources=1)
+            """ Convert the eps map h5 file into a png file"""
+            PPU.PlotDielectricMap(epsMapH5Filename)
 
 
-    """ Effect of the number of lattice cells """
-    # for latticeCellCount in np.arange(5, 11, 100, dtype=int):
-    #     sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df)
-    #     sim.use_output_directory(defaultResultFolder)
-    #     sim.init_sim()
-    #     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)),
-    #             mp.at_beginning(mp.output_epsilon),
-    #             mp.to_appended(f'ez_latCellCount-{latticeCellCount}', mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
-    #             until_after_sources = 400)
-    
-    
-    
-    
-    
-    """ Excite with sources outside of the lattice """
-    # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)), until_after_sources = 300)
+        # PPU.HDF2DImageTimeSeriesToMovie(fieldH5Filename, overlayh5Filename=epsMapH5Filename)
 
 
+        # sim.run(mp.at_every(0.6 , mp.output_png(mp.Ez, "-Zc dkbluered")), until=200)
 
-    """ see the effect of using different excitation """
-    # for df in np.arange(0.2 * f0, 0.4 * f0, f0/20):
-    #     sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df)
-    #     sim.init_sim()
+        # fcenterAnal = f0
+        # moviePeriod = 2
+        # fBandwidth=0.8 * f0
+        # sim.reset_meep()
+        # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)),
+        #     mp.at_beginning(mp.output_epsilon),
+        #     mp.to_appended("ez", mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
+        #     until_after_sources = 300)
+        # sys.stdout.close()
+        # sys.stdout = originalStdout
 
-    #     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)), until_after_sources = 500)
-    #     print(f'Using a Gaussian source with f_center={f0} and width of {df}; Check harminv')
+        # sim.run(mp.at_beginning(mp.output_epsilon), until_after_sources=1)
+
+
+        """ Effect of the number of lattice cells """
+        # for latticeCellCount in np.arange(5, 11, 100, dtype=int):
+        #     sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df)
+        #     sim.use_output_directory(defaultResultFolder)
+        #     sim.init_sim()
+        #     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)),
+        #             mp.at_beginning(mp.output_epsilon),
+        #             mp.to_appended(f'ez_latCellCount-{latticeCellCount}', mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
+        #             until_after_sources = 400)
         
+        
+        
+        
+        
+        """ Excite with sources outside of the lattice """
+        # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)), until_after_sources = 300)
+
+
+
+        """ see the effect of using different excitation """
+        # for df in np.arange(0.2 * f0, 0.4 * f0, f0/20):
+        #     sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df)
+        #     sim.init_sim()
+
+        #     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)), until_after_sources = 500)
+        #     print(f'Using a Gaussian source with f_center={f0} and width of {df}; Check harminv')
+            

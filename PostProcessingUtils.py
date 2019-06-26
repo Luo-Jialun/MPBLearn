@@ -1,3 +1,5 @@
+#!/opt/anaconda3/bin/python
+
 """
 Author: Jialun Luo
 """
@@ -9,32 +11,58 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 import subprocess
+import argparse
+import glob
 
-def PlotTransmission(refTrFile, measureTrFile, workingDirectory = '.', skiprows=0, legends=None):
+def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows=0, legends=None):
     """ TODO: rename 'active' to something human readable... """
     referenceData = np.loadtxt(f'{workingDirectory}/{refTrFile}', delimiter=',', skiprows=skiprows, converters={0 : lambda s: np.nan})
-    activeData = np.loadtxt(f'{workingDirectory}/{measureTrFile}', delimiter=',', skiprows=skiprows, converters={0 : lambda s: np.nan})
+    
+    referenceData = referenceData.transpose()
+    refFlux = referenceData[2]
+    refFreq = referenceData[1]
+    
+    nPoints = len(refFlux)
+    nCurves = len(measureTrFiles)
+    print(f'We have {nPoints} points per curve')
+    
+    allTestFlux = np.zeros((nCurves, nPoints))
+    allTestFreq = np.zeros((nCurves, nPoints))
+    allRatios = np.zeros((nCurves, nPoints))
     
     """ 2nd column (index 1) is the frequency, 3rd column (index 2) is the field"""
-    frequency = referenceData[:,1]
-    activeDataField = activeData[:,2]
-    refDataField = referenceData[:,2]
-    print(f'Number of data: {np.size(refDataField)}')
-    ratio = activeDataField/refDataField
+
+    for idx, filename in enumerate(measureTrFiles):
+        testSetupData = np.loadtxt(f'{workingDirectory}/{filename}', delimiter=',', skiprows=skiprows, converters={0 : lambda s: np.nan})
+        testSetupData = testSetupData.transpose()
+        allTestFlux[idx] = testSetupData[2]
+        allTestFreq[idx] = testSetupData[1]
+        allRatios[idx] = testSetupData[2]/refFlux
+        
+        
+
     plotCount = 2
-    fig, axes = plt.subplots(1, plotCount, figsize=(4 * plotCount, 4))
     
-    axes[0].plot(frequency, ratio, 'r.-')
+    fig, axes = plt.subplots(1, plotCount, figsize=( 5 * plotCount, 4))
+    
+    for ratio in allRatios:
+        axes[0].plot(refFreq, ratio)
+    
     axes[0].set_ylabel('Transmission')
     axes[0].set_xlabel('Frequency [c/a]')
     
-    axes[1].plot(frequency, activeDataField, 'b.-', frequency, refDataField, 'g.-')
+    axes[0].set_ylim([0, 1.0])
+    
+    for flux in allTestFlux:
+        axes[1].plot(refFreq, flux)
+    
+    # axes[1].plot(frequency, testSetupDataField, 'b.-', frequency, refDataField, 'g.-')
     if(legends!=None):
-        axes[1].legend()
+        axes[1].legend(legends)
     else:
         axes[1].legend(['With cavity', 'Without'])
 
-    axes[1].set_ylabel('Field strength')
+    axes[1].set_ylabel('Poynting Vector Flux')
     axes[1].set_xlabel('Frequency [c/a]')
     
     plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
@@ -116,20 +144,62 @@ def PlotDielectricMap(epsH5filename, suppressInfo= False, isDebugging=False):
     print(f'Use the following command to open:')
     print(f'eog {svgFilename}&')
 
-
-
 if __name__ == '__main__':
+    defaultWorkingDirectory = './results/meepTrigLatCylAirHole'
+    defaultPythonScriptName = 'bridge_wvg_cavity'  
 
-    workingDirectory = './results/meepTrigLatCylAirHole'
-    pythonScriptName = 'bridge_wvg_cavity'  
-    """ Test PlotDielectricMap """
     
-    # h5EpsilonFilename = f'{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
+    parser = argparse.ArgumentParser(description="Utilities to process h5 outputs and flux tables from the meep simulation")
+    parser.add_argument('-p', "--plot-transmission", nargs='+', help="Plot transmission given a reference flux (first file) and the test setup flux data (second file)")
+    parser.add_argument("--make-movie", help="Make time domain simulation movie given the field evolution h5 file (and optionally) an overlay dielectric map")
+    parser.add_argument('-s', "--sim-file-prefix", help="Name of the python script which runs the meep simulation", default=defaultPythonScriptName)
+    
+    args = parser.parse_args()
 
+    print(args)
+
+    resultDirectory = defaultWorkingDirectory
+
+
+
+    if args.plot_transmission:
+        print(f'Here I should plot transmission and save it')
+        print(f'the reference is {args.plot_transmission[0]}')
+        print(f'The following are test setup data')
+        # for filename in args.plot_transmission[1:]:
+        #     print(f'{filename}')
+        
+        testDataFilenames = []
+        legends = []
+        testDataFilenameGlobbed  = False
+        for s in args.plot_transmission[1:]:
+            if( "*" in s ):
+                print("* detected, using glob")
+                
+                for filename in glob.glob(f'{resultDirectory}/{s}'):
+                    localFilename =filename.split('/')[-1] 
+                    testDataFilenames.append(localFilename)
+                    
+                    """TODO: put 'cavity' somewhere else"""
+                    explodedFilename = localFilename.split('_')
+                    legends.append([s2 for s2 in explodedFilename if 'cavity-' in s2][0])
+                    
+                    
+                testDataFilenameGlobbed = True
+        if ( not testDataFilenameGlobbed ):
+            testDataFilenames = args.plot_transmission[1:]
+        print(testDataFilenames)
+        print(legends)
+        # exit()
+        PlotTransmission(args.plot_transmission[0], testDataFilenames, workingDirectory=defaultWorkingDirectory, legends = legends)
+
+
+    """ Test PlotDielectricMap """
+    # h5EpsilonFilename = f'{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
     # PlotDielectricMap(f'{workingDirectory}/{h5EpsilonFilename}')
 
 
-
+    """ Test PlotTransmission() """
     # measurementTrFile = 'flux_testFlux_cavity_N-3.csv' 
     # refFile = 'flux_testFlux_no_cavity.csv'
     # plotTransmission(refFile, measurementTrFile, workingDirectory=workingDirectory)
@@ -141,10 +211,15 @@ if __name__ == '__main__':
 
     # fActive = 'wvg_with_cavity-1_fluxParam_fcen-0.435_df-0.1_flux.csv'
     # fActive = 'wvg_with_cavity-2_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    fActive = 'wvg_with_cavity-3_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    fRef = 'wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
-    PlotTransmission(fRef, fActive, workingDirectory=workingDirectory)
-    
-    # h5Filename = f'{workingDirectory}/{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_ez.h5'
-    # overlayh5Filename = f'{workingDirectory}/{pythonScriptName}-wvg_with_no_cavity_exciationParam_fcen-0.43569_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
+    # fActive =   'wvg_with_cavity-1_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
+    fRef =      'wvg_with_no_cavity_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_flux.csv'
+    # PlotTransmission(fRef, fActive, workingDirectory=workingDirectory)
+    # exit()
+
+
+    # epsLocalName = 'bridge_wvg_cavity-wvg_with_cavity-3_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_eps.h5'
+    # ezLocalName = 'bridge_wvg_cavity-wvg_with_cavity-3_exciationParam_fcen-0.4319_bw-0.05_fluxParam_fcen-0.435_df-0.1_ez.h5'
+
+    # h5Filename = f'{workingDirectory}/{ezLocalName}'
+    # overlayh5Filename = f'{workingDirectory}/{epsLocalName}'
     # HDF2DImageTimeSeriesToMovie(h5Filename, overlayh5Filename=overlayh5Filename, isDebugging = True)
