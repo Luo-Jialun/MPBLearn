@@ -191,7 +191,7 @@ if __name__ == '__main__':
     if args.make_movie:
         ezLocalName  = args.make_movie[0]
         epsLocalName = args.make_movie[1]
-        
+
         h5Filename = f'{workingDirectory}/{ezLocalName}'
         overlayh5Filename = f'{workingDirectory}/{epsLocalName}'
         HDF2DImageTimeSeriesToMovie(h5Filename, overlayh5Filename=overlayh5Filename)
