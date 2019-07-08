@@ -5,6 +5,10 @@ Author: Jialun Luo
 Calculate time resolved field propagation of some photonic crystal structure
 
 Note: on a different machine, check the #! statement at the beginning of the file
+
+Parameters:
+sidebankThickness,
+separation, the distance between the centers of air cylinders of the center row
 """
 
 
@@ -19,7 +23,7 @@ import sys
 import subprocess
 
 
-def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0):
+def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0, separation = 2.0):
     computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
 
     materialHBN = mp.Medium(epsilon=eps)
@@ -61,21 +65,21 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
     for hole in airHoles:
       geometryAssembly.append(hole)
     
-    # for gobject in geometryAssembly:
-    #     print(f'{gobject} at {gobject.center} with material={gobject.material}')
+    for gobject in geometryAssembly:
+        print(f'{gobject} at {gobject.center} with material={gobject.material}')
 
     """ make a defect line at y=0 """
-    for i in range(unitCellCountX):
-        shift = math.ceil(unitCellCountX/2)-1
-        geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(x=1)* (i-shift) ))
+    # for i in range(unitCellCountX):
+    #     shift = math.ceil(unitCellCountX/2)-1
+    #     geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(x=1)* (i-shift) ))
 
 
     """ make a cavity in the middle with N air cylinders in either direction"""
-    if(makeCavity):
-        for i in range(cavityUnitCellCount):
-            # shift = math.ceil(cavityUnitCellCount/2)-1        
-            geometryAssembly.append(mp.Cylinder(r, material=mp.air, center=mp.Vector3(x=1)* (i+1)))
-            geometryAssembly.append(mp.Cylinder(r, material=mp.air, center= -1 * mp.Vector3(x=1) * (i+1) ))
+    # if(makeCavity):
+    #     for i in range(cavityUnitCellCount):
+    #         # shift = math.ceil(cavityUnitCellCount/2)-1        
+    #         geometryAssembly.append(mp.Cylinder(r, material=mp.air, center=mp.Vector3(x=1)* (i+1)))
+    #         geometryAssembly.append(mp.Cylinder(r, material=mp.air, center= -1 * mp.Vector3(x=1) * (i+1) ))
 
     """ make a defect point at the center"""
     geometryAssembly.append(hBNCylinder)            
@@ -137,7 +141,7 @@ if __name__ == '__main__':
     unitCellCountX = 40
     unitCellCountY = 3
 
-    simDomainSizeX = 20
+    simDomainSizeX = 40
     simDomainSizeY = 10
 
     bridgeWidth = unitCellCountY
@@ -163,15 +167,16 @@ if __name__ == '__main__':
 
     """ run with flux calculation """
     # print(f'{mp.lattice_to_cartesian(mp.Vector3(0,1,0), geometryLattice)}')
-    fluxCutline = mp.FluxRegion(center=mp.Vector3(8,0), size=mp.Vector3(0, 1), direction = mp.X)
+    fluxCutline = mp.FluxRegion(center=mp.Vector3(7,0), size=mp.Vector3(0, bridgeWidth), direction = mp.X)
 
-    for cavityUnitCellCount in np.arange(1,10,1):
+
+    for cavityUnitCellCount in [1]:
         for isMakingCavity in [True, False]:
             """ I don't seem to be able to calculate the flux in the commented out direction"""
             if(isMakingCavity):
-                runDescription = f'wvg_with_cavity-{cavityUnitCellCount}_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
+                runDescription = f'wvg_with_cavity-{cavityUnitCellCount}_exciteParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
             else:
-                runDescription = f'wvg_with_no_cavity_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
+                runDescription = f'wvg_with_no-cavity_exciteParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
 
             defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
 

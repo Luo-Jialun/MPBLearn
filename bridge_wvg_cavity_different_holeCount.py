@@ -167,7 +167,6 @@ if __name__ == '__main__':
 
     for cavityUnitCellCount in np.arange(1,10,1):
         for isMakingCavity in [True, False]:
-            """ I don't seem to be able to calculate the flux in the commented out direction"""
             if(isMakingCavity):
                 runDescription = f'wvg_with_cavity-{cavityUnitCellCount}_exciationParam_fcen-{f0}_bw-{df}_fluxParam_fcen-{fluxFcen}_df-{fluxDF}'
             else:

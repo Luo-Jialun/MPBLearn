@@ -14,7 +14,7 @@ import subprocess
 import argparse
 import glob
 
-def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows=0, legends=None):
+def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows=0, legends=None, plotDescription=None):
     """ TODO: rename 'active' to something human readable... """
     referenceData = np.loadtxt(f'{workingDirectory}/{refTrFile}', delimiter=',', skiprows=skiprows, converters={0 : lambda s: np.nan})
     
@@ -38,34 +38,48 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
         allTestFlux[idx] = testSetupData[2]
         allTestFreq[idx] = testSetupData[1]
         allRatios[idx] = testSetupData[2]/refFlux
-        
-        
 
     plotCount = 2
+    legendWidth = 4
     
-    fig, axes = plt.subplots(1, plotCount, figsize=( 5 * plotCount, 4))
+    fig, axes = plt.subplots(plotCount, 1, figsize=(7 , 4 * plotCount))
     
+    idx = 0    
     for ratio in allRatios:
-        axes[0].plot(refFreq, ratio)
+        axes[0].plot(refFreq, ratio, label=legends[idx])
+        idx += 1
+    
+    
     
     axes[0].set_ylabel('Transmission')
     axes[0].set_xlabel('Frequency [c/a]')
     
-    axes[0].set_ylim([0, 1.0])
+    axes[0].set_ylim([0, 1.5])
     
+    axes[1].plot(refFreq, refFlux, '--', label='Without cavities')
+    
+    idx = 0
     for flux in allTestFlux:
-        axes[1].plot(refFreq, flux)
+        axes[1].plot(refFreq, flux, label=legends[idx], linewidth = 0.5)
+        idx += 1
+    
+    del idx
     
     # axes[1].plot(frequency, testSetupDataField, 'b.-', frequency, refDataField, 'g.-')
     if(legends!=None):
-        axes[1].legend(legends)
+        """ TODO: clean up the legend code"""
+        fig.legend(loc="upper right", borderaxespad = 0)
     else:
-        axes[1].legend(['With cavity', 'Without'])
+        axes[0].legend(['With cavity', 'Without'])
+
+    if(plotDescription!=None):
+        fig.text(0.05, 0.03, plotDescription, ha='left')
+
 
     axes[1].set_ylabel('Poynting Vector Flux')
     axes[1].set_xlabel('Frequency [c/a]')
     
-    plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+    plt.tight_layout(pad=4, w_pad=0.5, h_pad=0.5)
 
     plt.show()
 
@@ -152,12 +166,14 @@ if __name__ == '__main__':
     parser.add_argument('-p', "--plot-transmission", nargs='+', help="Plot transmission given a reference flux (first file) and the test setup flux data (second file)")
     parser.add_argument("--make-movie", nargs=2, help="Make time domain simulation movie given the field evolution h5 file (must be the first file) (and optionally) an overlay dielectric map (second file)")
     parser.add_argument('-s', "--sim-file-prefix", help="Name of the python script which runs the meep simulation", default=defaultPythonScriptName)
-    
+    parser.add_argument('--set-wd', help="change the directory where files reside", default=defaultWorkingDirectory)
     args = parser.parse_args()
 
-    print(args)
+    print(f'Arguments are: {args}')
 
-    resultDirectory = defaultWorkingDirectory
+    resultDirectory = args.set_wd
+    
+    
     if args.plot_transmission:
         print(f'Here I should plot transmission and save it')
         print(f'the reference is {args.plot_transmission[0]}')
@@ -171,27 +187,33 @@ if __name__ == '__main__':
                 print("* detected, using glob")
                 
                 for filename in glob.glob(f'{resultDirectory}/{s}'):
-                    localFilename =filename.split('/')[-1] 
+                    localFilename =filename.split('/')[-1]  #split and take the last element to get just the filename
                     testDataFilenames.append(localFilename)
-                    
-                    """TODO: put 'cavity' somewhere else"""
-                    explodedFilename = localFilename.split('_')
-                    legends.append([s2 for s2 in explodedFilename if 'cavity-' in s2][0])
-                    
-                    
                 testDataFilenameGlobbed = True
         if ( not testDataFilenameGlobbed ):
             testDataFilenames = args.plot_transmission[1:]
-        print(testDataFilenames)
+
+        print(f'Plotting the following data:')
+        for filename in testDataFilenames:
+            print(filename)
+            """TODO: put 'cavity' somewhere else"""
+            """TODO: Legend specification should be changed somewhere else"""
+            explodedFilename = filename.split('_')
+            legends.append([s2.split('-')[1] for s2 in explodedFilename if 'sep' in s2][0])  
+            
+            
+        
         print(legends)
         # exit()
-        PlotTransmission(args.plot_transmission[0], testDataFilenames, workingDirectory=defaultWorkingDirectory, legends = legends)
+        
+        
+        PlotTransmission(args.plot_transmission[0], testDataFilenames, workingDirectory=defaultWorkingDirectory, legends = legends, plotDescription=args.plot_transmission[0])
 
 
     if args.make_movie:
         ezLocalName  = args.make_movie[0]
         epsLocalName = args.make_movie[1]
 
-        h5Filename = f'{workingDirectory}/{ezLocalName}'
-        overlayh5Filename = f'{workingDirectory}/{epsLocalName}'
+        h5Filename = f'{resultDirectory}/{ezLocalName}'
+        overlayh5Filename = f'{resultDirectory}/{epsLocalName}'
         HDF2DImageTimeSeriesToMovie(h5Filename, overlayh5Filename=overlayh5Filename)
