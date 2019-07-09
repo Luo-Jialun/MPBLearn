@@ -7,7 +7,7 @@ Calculate time resolved field propagation of some photonic crystal structure
 Note: on a different machine, check the #! statement at the beginning of the file
 Parameters:
 sidebankThickness,
-separation, the distance between the centers of air cylinders of the center row
+separation - the distance between the centers of air cylinders of the center row
 """
 
 
@@ -23,123 +23,127 @@ import subprocess
 
 
 def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0, separation = 2.0):
-    computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
+  computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
 
-    materialHBN = mp.Medium(epsilon=eps)
-    dielectricMaterial = materialHBN
-    airCylinder = mp.Cylinder(r, material=mp.air)
-    hBNCylinder = mp.Cylinder(r, material=dielectricMaterial)
+  materialHBN = mp.Medium(epsilon=eps)
+  dielectricMaterial = materialHBN
+  airCylinder = mp.Cylinder(r, material=mp.air)
+  hBNCylinder = mp.Cylinder(r, material=dielectricMaterial)
 
-    # def shiftedGObject(geom, shift):
-    #     geom.center=geom.center+shift
-    #     return geom
+  # def shiftedGObject(geom, shift):
+  #     geom.center=geom.center+shift
+  #     return geom
 
-    if(geometryLattice==None):
-        print('No lattice provided, setup one')
-        basis1 = mp.Vector3(math.sqrt(3)/2, 0.5)
-        basis2 = mp.Vector3(math.sqrt(3)/2, -0.5)
+  if(geometryLattice==None):
+      print('No lattice provided, setup one')
+      basis1 = mp.Vector3(math.sqrt(3)/2, 0.5)
+      basis2 = mp.Vector3(math.sqrt(3)/2, -0.5)
 
-        geometryLattice = mp.Lattice(  size = mp.Vector3(unitCellCountX, unitCellCountY),
-                                        basis1 = basis1,
-                                        basis2 = basis2)
-
-
-    hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
-            material = materialHBN, 
-            center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
-    hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
-            material = materialHBN, 
-            center = mp.Vector3(- (PMLThickness + sidebankThickness)/2 + computeCellSizeX/2, 0))
-    hBNBridge = mp.Block(mp.Vector3(computeCellSizeX, bridgeWidth), material = materialHBN)
-
-    geometryAssembly = []
-
-    """ banks """
-    geometryAssembly.append(hBNSidebankLeft) 
-    geometryAssembly.append(hBNSidebankRight)
-    geometryAssembly.append(hBNBridge)
-
-    """ """
-    airHoles = mp.geometric_objects_lattice_duplicates(geometryLattice, [airCylinder])
-    for hole in airHoles:
-      geometryAssembly.append(hole)
-    
-    # for gobject in geometryAssembly:
-    #     print(f'{gobject} at {gobject.center} with material={gobject.material}')
-
-    """ make a defect line at y=0 """
-    for i in range(unitCellCountX):
-        shift = math.ceil(unitCellCountX/2)-1
-        
-        geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(x=1)* (i-shift) ))
+      geometryLattice = mp.Lattice(  size = mp.Vector3(unitCellCountX, unitCellCountY),
+                                      basis1 = basis1,
+                                      basis2 = basis2)
 
 
-    """ make a cavity in the middle with N air cylinders in either direction"""
-    if(makeCavity):
-        for i in range(cavityUnitCellCount):
-            # shift = math.ceil(cavityUnitCellCount/2)-1        
-            
-            shift = separation
-            
-            geometryAssembly.append(mp.Cylinder(r, material=mp.air, center=mp.Vector3(x=1)* (i + shift)))
-            geometryAssembly.append(mp.Cylinder(r, material=mp.air, center= -1 * mp.Vector3(x=1) * (i) ))
+  hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
+          material = materialHBN, 
+          center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
+  hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
+          material = materialHBN, 
+          center = mp.Vector3(- (PMLThickness + sidebankThickness)/2 + computeCellSizeX/2, 0))
+  hBNBridge = mp.Block(mp.Vector3(computeCellSizeX, bridgeWidth), material = materialHBN)
 
-    # """ make a defect point at the center"""
-    # geometryAssembly.append(hBNCylinder)            
+  geometryAssembly = []
+
+  """ banks """
+  geometryAssembly.append(hBNSidebankLeft) 
+  geometryAssembly.append(hBNSidebankRight)
+  geometryAssembly.append(hBNBridge)
+
+  """ """
+  airHoles = mp.geometric_objects_lattice_duplicates(geometryLattice, [airCylinder])
+  for hole in airHoles:
+    geometryAssembly.append(hole)
+  
+  # for gobject in geometryAssembly:
+  #     print(f'{gobject} at {gobject.center} with material={gobject.material}')
+
+  """ make a defect line at y=0 """
+  for i in range(unitCellCountX):
+      shift = math.ceil(unitCellCountX/2)-1
+      
+      geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(x=1)* (i-shift) ))
 
 
-    # for gobject in geometryAssembly:
-        # print(f'{gobject} at {gobject.center} with material={gobject.material}')
+  """ make a cavity in the middle with N air cylinders in either direction"""
+  if(makeCavity):
+      for i in range(cavityUnitCellCount):
+          # shift = math.ceil(cavityUnitCellCount/2)-1        
+          
+          shift = separation/2
+          geometryAssembly.append(mp.Cylinder(r, material=mp.air, center=mp.Vector3(x=1)* (i + shift)))
+          geometryAssembly.append(mp.Cylinder(r, material=mp.air, center= -1 * mp.Vector3(x=1) * (i + shift) ))
 
-    """ change the center into cartesian coordinates for meep"""
-    for geometricObject in geometryAssembly:
-        geometricObject.center = mp.lattice_to_cartesian(geometricObject.center, geometryLattice)
+  # """ make a defect point at the center"""
+  # geometryAssembly.append(hBNCylinder)            
 
 
-    if (pointSourceLocation== None):
-        """ if the source location is not specified"""
-        pointSourceLocation = mp.Vector3(- (computeCellSizeX/2 - PMLThickness * 1.1),0)
+  # for gobject in geometryAssembly:
+      # print(f'{gobject} at {gobject.center} with material={gobject.material}')
+
+  """ change the center into cartesian coordinates for meep"""
+  for geometricObject in geometryAssembly:
+      geometricObject.center = mp.lattice_to_cartesian(geometricObject.center, geometryLattice)
 
 
-    """ Use a Gaussian source to excite """
+  if (pointSourceLocation is None):
+      """ if the source location is not specified"""
+      pointSourceLocation = mp.Vector3(0, 0)
 
-    excitationSource = [mp.Source(mp.GaussianSource(frequency=fcen,fwidth=df),
-                        component=mp.Ez,
-                        # center=mp.Vector3())]
-                        center=mp.lattice_to_cartesian(pointSourceLocation, geometryLattice))]
+  """ Use a Gaussian source to excite """
 
-    # """ Use a continuous source to excite """
-    # excitationSource = [mp.Source(mp.ContinuousSource(frequency=fcen, width=20),
-    #                     component=mp.Ez,
-    #                     center=mp.lattice_to_cartesian(pointSourceLocation, geometryLattice))]
+  excitationSource = [mp.Source(mp.GaussianSource(frequency=fcen,fwidth=df),
+                      component=mp.Ez,
+                      # center=mp.Vector3())]
+                      center=mp.lattice_to_cartesian(pointSourceLocation, geometryLattice))]
+
+  # """ Use a continuous source to excite """
+  # excitationSource = [mp.Source(mp.ContinuousSource(frequency=fcen, width=20),
+  #                     component=mp.Ez,
+  #                     center=mp.lattice_to_cartesian(pointSourceLocation, geometryLattice))]
 
 
 
-    pml_layers = [mp.PML(PMLThickness)]
+  pml_layers = [mp.PML(PMLThickness)]
 
-    resolution = 16
-    sim = mp.Simulation(cell_size=computationCell,
-                        boundary_layers=pml_layers,
-                        geometry=geometryAssembly,
-                        default_material=mp.air,
-                        sources=excitationSource,
-                        resolution=resolution)
+  resolution = 16
+  sim = mp.Simulation(cell_size=computationCell,
+                      boundary_layers=pml_layers,
+                      geometry=geometryAssembly,
+                      default_material=mp.air,
+                      sources=excitationSource,
+                      resolution=resolution)
 
-    print(f'Done a preliminary setup')
-    return sim
+  print(f'Done a preliminary setup')
+  return sim
+
+""" Debug tool"""
+
+def trace(frame, event, arg):
+    print("%s, %s:%d" % (event, frame.f_code.co_filename, frame.f_lineno))
+    return trace
 
 if __name__ == '__main__':
-
+  # sys.settrace(trace)
   """ Set up argparser here"""
   parser = argparse.ArgumentParser(description = 'Configure and run meep on certain geometry')
 
   pythonScriptName = 'brd_wvg_cvt_diff_spc'
 
   PMLThickness = 1.0
+  
   eps0 = 4.84
-  r0 = 0.3
-  f0 = 0.4
-  df = 0.6
+  r0 = 0.37
+  f0 = 0.344086 # center frequency of the source
   framerate = 8
   unitCellCountX = 40
   unitCellCountY = 5
@@ -147,18 +151,20 @@ if __name__ == '__main__':
   simDomainSizeX = 20
   simDomainSizeY = 10
 
-  bridgeWidth = unitCellCountY
+  bridgeWidth = unitCellCountY + 2
   # cavityUnitCellCount = 1
 
   # isMakingCavity = True
   # isMakingCavity = False
+  
+
 
   """ Analysis parameters """
   nfreq = 4000 # number of frequencies at which to compute flux
   fluxDF = 0.6
   fluxFcen = 0.4
   
-  harminvDf = 0.3
+  harminvDf = 0.4
   harminvF0 = 0.4
 
   """ setup the geometry lattice """
@@ -176,30 +182,52 @@ if __name__ == '__main__':
 
   """ Parameter sweeps """
   cavityUnitCellCountQuery  = np.arange(1, 3, 1)
-  isMakingCavityQuery       = [True]
-  separationQuery           = np.arange(1, 2.05, 0.25)
+  isMakingCavityQuery       = [True, False]
+  separationQuery           = np.arange(1.8, 2.1, 0.01)
+
+  """ Setups for printing stdout into a file"""
+  # originalStdout = sys.stdout
 
 
   """ Uncomment the following lines to make just a line defect """
-  # cavityUnitCellCountQuery  = [1]
-  # isMakingCavityQuery       = [False]
-  # separationQuery = [1] 
+  # cavityUnitCellCountQuery  = [3, 4, 5, 6]
+  cavityUnitCellCountQuery = [3]
+  separationQuery = [1.99] 
   # separationQuery           = [1, 1.2 , 1.5, 2]
   
   # epsQuery = [5, 7, 9, 11, 13]
   epsQuery  = [4.84]
-  endProgramFlag=False 
-  for eps1 in epsQuery:
+  refIsCalculated=False 
+  
+  # exciteF0Query = np.arange(0.390, 0.490, 0.01)
+  exciteF0Query = [1.8797]
+  df = 0.8 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
+
+  
+  harminvF0 = 1.88
+  harminvDf = harminvF0
+  ptSourceLocation = mp.Vector3(-8, 0)
+  
+  # ptSourceLocation = mp.Vector3(- (simDomainSizeX/2 - 1.5 * PMLThickness), 0)
+  
+  
+  sim = None
+  for f0 in exciteF0Query:
     
     for isMakingCavity in isMakingCavityQuery:
+      """ End the current loop after one run of without holes (when isMakingCavity == False)""" 
+      if(refIsCalculated):
+        refIsCalculated = False
+        break
+      
       for cavityUnitCellCount in cavityUnitCellCountQuery:
         for separation in separationQuery:
-          """ I don't seem to be able to calculate the flux in the commented out direction"""
+          
           if(isMakingCavity):
-            runDescription = f'wvg_with_cavity-{cavityUnitCellCount}_eps-{eps1}_sep-{separation:.3f}_excite_fc-{f0}_bw-{df}_flux_fc-{fluxFcen}_df-{fluxDF}'
+            runDescription = f'with_cavity-{cavityUnitCellCount}_r-{r0:.3f}_NRow-{unitCellCountY}_sep-{separation:.3f}_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
           else:
-            # endProgramFlag = True
-            runDescription = f'wvg_no-cavity_eps-{eps1}_sep-0_excite_fc-{f0}_bw-{df}_flux_fc-{fluxFcen}_df-{fluxDF}'
+            refIsCalculated = True
+            runDescription = f'no-cavity_r-{r0:.3f}_NRow-{unitCellCountY}_sep-0_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
 
           defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
           
@@ -212,63 +240,52 @@ if __name__ == '__main__':
           runLogFilename = f'{defaultResultFolder}/{runDescription}.log'
           initLogFilename = f'{defaultResultFolder}/{runDescription}.initialization.log'
           fluxDataFilename = f'{defaultResultFolder}/{fluxFileBasename}.csv'
-          
-          sim = setupSimulaion(eps = eps1, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth, separation = separation)
+                    
+          sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth, separation = separation, pointSourceLocation=ptSourceLocation)
           # sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth, separation = separation)
           sim.init_sim()
           sim.use_output_directory(defaultResultFolder)
-
-          """ Try a narrow source outside of the patterned region"""
-          # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(), f0, df)), until_after_sources = 400)
+          
 
           """ add_flux for calculate flux """
           trans = sim.add_flux(fluxFcen, fluxDF, nfreq, fluxCutline)
 
-          with open(runLogFilename, 'w') as runLog:
-            originalStdout = sys.stdout
-            print(f'point stdout to {runLogFilename}')
-            sys.stdout = runLog
-
-            sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(simDomainSizeX/2 - PMLThickness * 1.1, 0), f0, harminvDf)),
+          if (isMakingCavity) :
+            sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), harminvF0, harminvDf)),
                         mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
                         mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
-                        # until=500)
+                        # until=200)
                         # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
-                        until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-3))
-                      
-            sys.stdout = originalStdout
-            print('print back to the real stdout')
-
-          
+                        until_after_sources = 500)
+                        # until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-2))
+          else:
+            sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), harminvF0, harminvDf)),
+                        mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
+                        mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
+                        until=50)
+                        # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
+                        # until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-2))
           
           print(f'Run description: {runDescription}')
       
           with open(fluxDataFilename, 'w') as csvrecord:
-            originalStdout = sys.stdout
-            print('point stdout to a file')
+            print(f'point stdout to {fluxDataFilename}')
             sys.stdout = csvrecord
-            
             sim.display_fluxes(trans)  # print out the flux spectrum
-            sys.stdout = originalStdout
+            sys.stdout = open("/dev/stdout", "w")
             print('print back to the real stdout')
             print('Flux data saved at')
             print(fluxDataFilename)
             print('or')
             print(f'{fluxFileBasename}.csv')
-
+            
+          """ closing log files """
+          # initLog.close()
+          # runLog.close()
+          
           """ Convert the eps map h5 file into a png file"""
           PPU.PlotDielectricMap(epsMapH5Filename)
           
-          """ End the program after one run of without holes (when isMakingCavity == False)""" 
-          if(endProgramFlag):
-            exit()
-    
-          
-          
-          
-          
-          
-
 
     # PPU.HDF2DImageTimeSeriesToMovie(fieldH5Filename, overlayh5Filename=epsMapH5Filename)
 

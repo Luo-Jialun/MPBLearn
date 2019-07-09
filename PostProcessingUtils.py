@@ -51,7 +51,7 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
     
     
     
-    axes[0].set_ylabel('Transmission')
+    axes[0].set_ylabel('Flux ratio (to reference level)')
     axes[0].set_xlabel('Frequency [c/a]')
     
     axes[0].set_ylim([0, 1.5])
@@ -87,7 +87,6 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
 def HDF2DImageTimeSeriesToMovie(h5filename, fps = 20, suppressInfo= False, overlayh5Filename=None, isDebugging=False):
     subprocess.run(['mkdir', '-p', 'tmp'], shell=True, capture_output=True)
 
-
     """ Read the time series image """
     data = None
     with h5py.File(h5filename, 'r') as h5file:
@@ -117,6 +116,7 @@ def HDF2DImageTimeSeriesToMovie(h5filename, fps = 20, suppressInfo= False, overl
 
     images = []
     fig = plt.figure()
+    fig.suptitle(h5filename)
   
     for i in range(frameCount):
         if(overlayh5Filename!=None): 
@@ -137,6 +137,7 @@ def HDF2DImageTimeSeriesToMovie(h5filename, fps = 20, suppressInfo= False, overl
     ani.save(f'{h5filename}.mp4', writer = FFwriter )
     encodeEndTime = time.time()
     if(not suppressInfo): print(f'Encoding took {(encodeEndTime - encodeStartTime):.5f} seconds')
+    print(f'Video exported to\n{h5filename}.mp4')
     
     return 0
 
@@ -173,7 +174,6 @@ if __name__ == '__main__':
 
     resultDirectory = args.set_wd
     
-    
     if args.plot_transmission:
         print(f'Here I should plot transmission and save it')
         print(f'the reference is {args.plot_transmission[0]}')
@@ -200,12 +200,8 @@ if __name__ == '__main__':
             """TODO: Legend specification should be changed somewhere else"""
             explodedFilename = filename.split('_')
             legends.append([s2.split('-')[1] for s2 in explodedFilename if 'sep' in s2][0])  
-            
-            
-        
+
         print(legends)
-        # exit()
-        
         
         PlotTransmission(args.plot_transmission[0], testDataFilenames, workingDirectory=defaultWorkingDirectory, legends = legends, plotDescription=args.plot_transmission[0])
 
