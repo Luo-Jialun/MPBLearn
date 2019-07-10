@@ -44,20 +44,20 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
                                       basis2 = basis2)
 
 
-  hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
-          material = materialHBN, 
-          center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
-  hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
-          material = materialHBN, 
-          center = mp.Vector3(- (PMLThickness + sidebankThickness)/2 + computeCellSizeX/2, 0))
-  hBNBridge = mp.Block(mp.Vector3(computeCellSizeX, bridgeWidth), material = materialHBN)
+  # hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
+  #         material = materialHBN, 
+  #         center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
+  # hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
+  #         material = materialHBN, 
+  #         center = mp.Vector3(- (PMLThickness + sidebankThickness)/2 + computeCellSizeX/2, 0))
+  hBNBridge = mp.Block(mp.Vector3(mp.inf, bridgeWidth, mp.inf), material = materialHBN)
 
-  geometryAssembly = []
+  geometryAssembly = [hBNBridge]
 
   """ banks """
-  geometryAssembly.append(hBNSidebankLeft) 
-  geometryAssembly.append(hBNSidebankRight)
-  geometryAssembly.append(hBNBridge)
+  # geometryAssembly.append(hBNSidebankLeft) 
+  # geometryAssembly.append(hBNSidebankRight)
+  # geometryAssembly.append(hBNBridge)
 
   """ """
   airHoles = mp.geometric_objects_lattice_duplicates(geometryLattice, [airCylinder])
@@ -102,20 +102,20 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
   """ Use a Gaussian source to excite """
 
   excitationSource = [mp.Source(mp.GaussianSource(frequency=fcen,fwidth=df),
-                      component=mp.Ez,
-                      # center=mp.Vector3())]
-                      center=mp.lattice_to_cartesian(pointSourceLocation, geometryLattice))]
+                      component=mp.Ey,
+                      center=pointSourceLocation, 
+                      size=mp.Vector3(0, bridgeWidth))]
 
   # """ Use a continuous source to excite """
   # excitationSource = [mp.Source(mp.ContinuousSource(frequency=fcen, width=20),
-  #                     component=mp.Ez,
+  #                     component=mp.Ey,
   #                     center=mp.lattice_to_cartesian(pointSourceLocation, geometryLattice))]
 
 
 
   pml_layers = [mp.PML(PMLThickness)]
 
-  resolution = 16
+  resolution = 20
   sim = mp.Simulation(cell_size=computationCell,
                       boundary_layers=pml_layers,
                       geometry=geometryAssembly,
@@ -141,31 +141,26 @@ if __name__ == '__main__':
 
   PMLThickness = 1.0
   
-  eps0 = 4.84
-  r0 = 0.37
+  eps0 = 13
+  r0 = 0.36
   f0 = 0.344086 # center frequency of the source
   framerate = 8
-  unitCellCountX = 40
-  unitCellCountY = 5
+  unitCellCountX = 20
+  unitCellCountY = 1
 
-  simDomainSizeX = 20
-  simDomainSizeY = 10
+  simDomainSizeX = 12.4
+  simDomainSizeY = 6
 
-  bridgeWidth = unitCellCountY + 2
-  # cavityUnitCellCount = 1
-
-  # isMakingCavity = True
-  # isMakingCavity = False
-  
-
+  bridgeWidth = 1.2
 
   """ Analysis parameters """
   nfreq = 4000 # number of frequencies at which to compute flux
-  fluxDF = 0.6
-  fluxFcen = 0.4
+  nfreq = 500
+  fluxFcen = 0.25
+  fluxDF = 0.2
   
-  harminvDf = 0.4
-  harminvF0 = 0.4
+  harminvF0 = 0.25
+  harminvDf = 0.2
 
   """ setup the geometry lattice """
   basis1 = mp.Vector3(1, 0)
@@ -177,7 +172,7 @@ if __name__ == '__main__':
 
   """ run with flux calculation """
   # print(f'{mp.lattice_to_cartesian(mp.Vector3(0,1,0), geometryLattice)}')
-  fluxCutline = mp.FluxRegion(center=mp.Vector3(8,0), size=mp.Vector3(0, 2 * bridgeWidth), direction = mp.X)
+  fluxCutline = mp.FluxRegion(center=mp.Vector3( simDomainSizeX/2 - 1 * PMLThickness - 0.5, 0), size=mp.Vector3(0, bridgeWidth))#, direction = mp.X)
 
 
   """ Parameter sweeps """
@@ -191,25 +186,26 @@ if __name__ == '__main__':
 
   """ Uncomment the following lines to make just a line defect """
   # cavityUnitCellCountQuery  = [3, 4, 5, 6]
-  cavityUnitCellCountQuery = [3]
-  separationQuery = [1.99] 
+  cavityUnitCellCountQuery = [6]
+  separationQuery = [1.2] 
   # separationQuery           = [1, 1.2 , 1.5, 2]
   
   # epsQuery = [5, 7, 9, 11, 13]
-  epsQuery  = [4.84]
+  # epsQuery  = [13]
   refIsCalculated=False 
   
   # exciteF0Query = np.arange(0.390, 0.490, 0.01)
-  exciteF0Query = [1.8797]
-  df = 0.8 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
+  exciteF0Query = [0.25]
+  df = 0.2 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
 
   
-  harminvF0 = 1.88
+  harminvF0 = 0.3
   harminvDf = harminvF0
-  ptSourceLocation = mp.Vector3(-8, 0)
+  ptSourceLocation = mp.Vector3(- (simDomainSizeX/2- 1 * PMLThickness) , 0)
   
   # ptSourceLocation = mp.Vector3(- (simDomainSizeX/2 - 1.5 * PMLThickness), 0)
   
+  defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
   
   sim = None
   for f0 in exciteF0Query:
@@ -218,6 +214,7 @@ if __name__ == '__main__':
       """ End the current loop after one run of without holes (when isMakingCavity == False)""" 
       if(refIsCalculated):
         refIsCalculated = False
+        
         break
       
       for cavityUnitCellCount in cavityUnitCellCountQuery:
@@ -229,7 +226,6 @@ if __name__ == '__main__':
             refIsCalculated = True
             runDescription = f'no-cavity_r-{r0:.3f}_NRow-{unitCellCountY}_sep-0_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
 
-          defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
           
           fieldFileBasename = f'{runDescription}_ez'
           epsMapFileBasename = f'{runDescription}_eps'
@@ -251,21 +247,23 @@ if __name__ == '__main__':
           trans = sim.add_flux(fluxFcen, fluxDF, nfreq, fluxCutline)
 
           if (isMakingCavity) :
-            sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), harminvF0, harminvDf)),
-                        mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
-                        mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
-                        # until=200)
-                        # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
-                        until_after_sources = 500)
-                        # until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-2))
+            sim.run(
+              mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), harminvF0, harminvDf)),
+              mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
+              # mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
+              # until=200)
+              # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
+              # until_after_sources = 500)
+              until_after_sources = mp.stop_when_fields_decayed(50, mp.Ey, mp.Vector3(0, 0), 1e-5))
           else:
-            sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), harminvF0, harminvDf)),
-                        mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
-                        mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
-                        until=50)
-                        # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
-                        # until_after_sources = mp.stop_when_fields_decayed(50, mp.Ez, mp.Vector3(0, 0), 1e-2))
-          
+            sim.run(
+              mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), harminvF0, harminvDf)),
+              mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
+              # mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
+              # until=50)
+              # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
+              until_after_sources = mp.stop_when_fields_decayed(50, mp.Ey, mp.Vector3(0, 0), 1e-5))
+
           print(f'Run description: {runDescription}')
       
           with open(fluxDataFilename, 'w') as csvrecord:
@@ -290,13 +288,13 @@ if __name__ == '__main__':
     # PPU.HDF2DImageTimeSeriesToMovie(fieldH5Filename, overlayh5Filename=epsMapH5Filename)
 
 
-    # sim.run(mp.at_every(0.6 , mp.output_png(mp.Ez, "-Zc dkbluered")), until=200)
+    # sim.run(mp.at_every(0.6 , mp.output_png(mp.Ey, "-Zc dkbluered")), until=200)
 
     # fcenterAnal = f0
     # moviePeriod = 2
     # fBandwidth=0.8 * f0
     # sim.reset_meep()
-    # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)),
+    # sim.run(mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), f0, df)),
     #     mp.at_beginning(mp.output_epsilon),
     #     mp.to_appended("ez", mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
     #     until_after_sources = 300)
@@ -311,18 +309,18 @@ if __name__ == '__main__':
     #     sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df)
     #     sim.use_output_directory(defaultResultFolder)
     #     sim.init_sim()
-    #     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)),
+    #     sim.run(mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), f0, df)),
     #             mp.at_beginning(mp.output_epsilon),
     #             mp.to_appended(f'ez_latCellCount-{latticeCellCount}', mp.at_every(1 / f0 / framerate, mp.output_efield_z)), 
     #             until_after_sources = 400)
     
     """ Excite with sources outside of the lattice """
-    # sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)), until_after_sources = 300)
+    # sim.run(mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), f0, df)), until_after_sources = 300)
     """ see the effect of using different excitation """
     # for df in np.arange(0.2 * f0, 0.4 * f0, f0/20):
     #     sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df)
     #     sim.init_sim()
 
-    #     sim.run(mp.after_sources(mp.Harminv(mp.Ez, mp.Vector3(0, 0), f0, df)), until_after_sources = 500)
+    #     sim.run(mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), f0, df)), until_after_sources = 500)
     #     print(f'Using a Gaussian source with f_center={f0} and width of {df}; Check harminv')
         

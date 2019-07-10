@@ -14,7 +14,7 @@ import subprocess
 import argparse
 import glob
 
-def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows=0, legends=None, plotDescription=None):
+def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows=0, legends=None, plotDescription=None, saveFigure = False):
     """ TODO: rename 'active' to something human readable... """
     referenceData = np.loadtxt(f'{workingDirectory}/{refTrFile}', delimiter=',', skiprows=skiprows, converters={0 : lambda s: np.nan})
     
@@ -43,6 +43,14 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
     legendWidth = 4
     
     fig, axes = plt.subplots(plotCount, 1, figsize=(7 , 4 * plotCount))
+
+    if(legends is not None):
+        """ TODO: clean up the legend code"""
+        fig.legend(loc="upper right", borderaxespad = 0)
+    else:
+        legends = ['With cavity', 'Without']
+        axes[0].legend(legends)
+
     
     idx = 0    
     for ratio in allRatios:
@@ -54,25 +62,18 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
     axes[0].set_ylabel('Flux ratio (to reference level)')
     axes[0].set_xlabel('Frequency [c/a]')
     
-    axes[0].set_ylim([0, 1.5])
+    axes[0].set_ylim([0, 1.1])
     
     axes[1].plot(refFreq, refFlux, '--', label='Without cavities')
     
-    idx = 0
-    for flux in allTestFlux:
-        axes[1].plot(refFreq, flux, label=legends[idx], linewidth = 0.5)
-        idx += 1
     
-    del idx
+    for i in range(nCurves):
+        axes[1].plot(allTestFreq[i], allTestFlux[i], label=legends[i], linewidth = 0.5)
     
     # axes[1].plot(frequency, testSetupDataField, 'b.-', frequency, refDataField, 'g.-')
-    if(legends!=None):
-        """ TODO: clean up the legend code"""
-        fig.legend(loc="upper right", borderaxespad = 0)
-    else:
-        axes[0].legend(['With cavity', 'Without'])
 
-    if(plotDescription!=None):
+
+    if(plotDescription is not None):
         fig.text(0.05, 0.03, plotDescription, ha='left')
 
 
@@ -80,8 +81,11 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
     axes[1].set_xlabel('Frequency [c/a]')
     
     plt.tight_layout(pad=4, w_pad=0.5, h_pad=0.5)
-
-    plt.show()
+    
+    if (saveFigure):
+        fig.savefig('TODOFIX_MY_NAME.svg')
+    else:
+        plt.show()
 
 
 def HDF2DImageTimeSeriesToMovie(h5filename, fps = 20, suppressInfo= False, overlayh5Filename=None, isDebugging=False):
