@@ -19,9 +19,10 @@ epsSet=4.84
 
 
 
-referenceFile=no-cavity_r-0.360_NRow-1_sep-0_excite_fc-0.250_bw-0.200_flux_fc-0.250_df-0.200_flux.csv
+referenceFile=no-cavity_r-0.380_NRow-1_sep-0_excite_fc-0.400_bw-0.600_flux_fc-0.500_df-0.800_flux.csv
 
-testFiles=with_cavity-6_r-0.360_NRow-1_sep-1.200_excite_fc-0.250_bw-0.200_flux_fc-0.250_df-0.200_flux.csv
+
+testFiles=with_cavity-3_r-0.380_NRow-1_sep-1*_excite_fc-0.400_bw-0.600_flux_fc-0.500_df-0.800_flux.csv
 
 # testFiles=with_cavity-4_r-0.370_sep-1.250_excite_fc-0.300_bw-0.400_flux_fc-0.400_df-0.600_flux.csv
 # referenceFile=$testFiles
