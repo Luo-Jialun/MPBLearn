@@ -22,25 +22,25 @@ import sys
 import subprocess
 
 
+
+
+
 def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0, separation = 2.0):
   computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
-
   materialHBN = mp.Medium(epsilon=eps)
   dielectricMaterial = materialHBN
   airCylinder = mp.Cylinder(r, material=mp.air)
   hBNCylinder = mp.Cylinder(r, material=dielectricMaterial)
 
   if(geometryLattice is None):
-    print('No lattice provided, setup triangle lattice...')
     basis1 = mp.Vector3(math.sqrt(3)/2, 0.5)
     basis2 = mp.Vector3(math.sqrt(3)/2, -0.5)
-
+    print(f'No lattice provided, setup triangle lattice... Basis vectors are: {basis1}, {basis2}')
     geometryLattice = mp.Lattice(  size = mp.Vector3(unitCellCountX, unitCellCountY),
                                     basis1 = basis1,
                                     basis2 = basis2)
 
-
-  # hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
+  # hBNSidebankLeft = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY),
   #         material = materialHBN, 
   #         center = mp.Vector3((PMLThickness + sidebankThickness)/2-computeCellSizeX/2, 0))
   # hBNSidebankRight = mp.Block(mp.Vector3(PMLThickness + sidebankThickness, computeCellSizeY), 
@@ -61,11 +61,11 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
       geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(x=1)* (i-shift) ))
 
   """ make a cavity in the middle with N air cylinders in either direction"""
-  if(makeCavity):
-    shift = separation/2
-    for i in range(cavityUnitCellCount):        
-      geometryAssembly.append(mp.Cylinder(r, material=mp.air, center=mp.Vector3(x=1) * (i + shift)))
-      geometryAssembly.append(mp.Cylinder(r, material=mp.air, center= -1 * mp.Vector3(x=1) * (i + shift) ))
+  # if(makeCavity):
+  #   shift = separation/2
+  #   for i in range(cavityUnitCellCount):
+  #     geometryAssembly.append(mp.Cylinder(r, material=mp.air, center=mp.Vector3(x=1) * (i + shift)))
+  #     geometryAssembly.append(mp.Cylinder(r, material=mp.air, center= -1 * mp.Vector3(x=1) * (i + shift) ))
 
   """ change the center into cartesian coordinates for meep"""
   # for geometricObject in geometryAssembly:
@@ -109,7 +109,12 @@ if __name__ == '__main__':
   PMLThickness = 1.0
   
   eps0 =  4.84
-  r0 = 0.38
+  r0 = 0.38 # radius of the main air holes
+  r1 = 0.25 # radius of the diminished air holes (on the side of the cavities)
+  p1 = 0.1  # the length of the rectangle (p1 X 2r1 is the size) that replaces the center air holes
+
+
+
   # f0 = 0.344086 # center frequency of the source
   framerate = 8
   unitCellCountX = 20

@@ -77,6 +77,7 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
     axes[1].set_ylabel('Poynting Vector Flux')
     axes[1].set_xlabel('Frequency [c/a]')
 
+    fig.legend()
     plt.tight_layout()
     plt.tight_layout(pad=4, w_pad=0.5, h_pad=0.5)
     
@@ -196,7 +197,7 @@ def PlotDielectricMap(epsH5filename, suppressInfo= False, isDebugging=False):
 
 def GetParamValue(filename, paramName):
     explodedFilename = filename.split('_')
-    return [s2.split('-')[1] for s2 in explodedFilename if 'sep' in s2][0]
+    return [s2.split('-')[1] for s2 in explodedFilename if paramName in s2][0]
 
 if __name__ == '__main__':
     defaultWorkingDirectory = './results/meepTrigLatCylAirHole'
@@ -219,7 +220,7 @@ if __name__ == '__main__':
         print(f'the reference is {args.plot_transmission[0]}')
         print(f'The following are test setup data')
 
-        paramName = 'sep'
+        paramName = 'cav'
 
         testDataFilenames = []
         legends = []
