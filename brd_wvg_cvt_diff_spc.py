@@ -30,7 +30,7 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
   airCylinder = mp.Cylinder(r, material=mp.air)
   hBNCylinder = mp.Cylinder(r, material=dielectricMaterial)
 
-  if(geometryLattice is not None):
+  if(geometryLattice is None):
     print('No lattice provided, setup triangle lattice...')
     basis1 = mp.Vector3(math.sqrt(3)/2, 0.5)
     basis2 = mp.Vector3(math.sqrt(3)/2, -0.5)
@@ -145,7 +145,7 @@ if __name__ == '__main__':
   """ Parameter sweeps """
   cavityUnitCellCountQuery  = np.arange(1, 3, 1)
   isMakingCavityQuery       = [True, False]
-  separationQuery           = np.arange(1.5, 1.6, 0.01)
+  separationQuery           = np.arange(1.65, 3, 0.01)
 
   """ Setups for printing stdout into a file"""
   # originalStdout = sys.stdout
@@ -153,8 +153,8 @@ if __name__ == '__main__':
 
   """ Uncomment the following lines to make just a line defect """
   # cavityUnitCellCountQuery  = [3, 4, 5, 6]
-  cavityUnitCellCountQuery = [ 3]
-  # separationQuery = [1.64] 
+  cavityUnitCellCountQuery = [9]
+  # separationQuery = [1.56]
   # separationQuery           = [1, 1.2 , 1.5, 2]
   
   # epsQuery = [5, 7, 9, 11, 13]
@@ -162,12 +162,12 @@ if __name__ == '__main__':
   refIsCalculated=False 
   
   # exciteF0Query = np.arange(0.390, 0.490, 0.01)
-  exciteF0Query = [0.4]
-  df = 0.6 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
+  exciteF0Query = [0.3]
+  df = 0.5 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
 
   
-  harminvF0 = 0.3
-  harminvDf = harminvF0
+  harminvF0 = 0.35
+  harminvDf = 0.15
   ptSourceLocation = mp.Vector3(- (simDomainSizeX/2- 1 * PMLThickness) , 0)
   
   # ptSourceLocation = mp.Vector3(- (simDomainSizeX/2 - 1.5 * PMLThickness), 0)

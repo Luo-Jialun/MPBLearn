@@ -52,25 +52,25 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
 
     if(legends is not None):
         """ TODO: clean up the legend code"""
-        
+
     else:
         legends = ['With cavity', 'Without']
         axes[0].legend(legends)
 
-    
-    idx = 0    
+
+    idx = 0
     for ratio in allRatios:
         axes[0].plot(refFreq, ratio, label=legends[idx])
         idx += 1
 
     axes[0].set_ylabel('Flux ratio (to reference level)')
     axes[0].set_xlabel('Frequency [c/a]')
-    
+
     axes[0].set_ylim([0, 1.1])
-    
+
     axes[1].plot(refFreq, refFlux, '--', label='Without cavities')
-    
-    
+
+
     for i in range(nCurves):
         axes[1].plot(allTestFreq[i], allTestFlux[i], label=legends[i], linewidth = 0.5)
 
@@ -78,7 +78,7 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
     axes[1].set_xlabel('Frequency [c/a]')
 
     plt.tight_layout()
-    # plt.tight_layout(pad=4, w_pad=0.5, h_pad=0.5)
+    plt.tight_layout(pad=4, w_pad=0.5, h_pad=0.5)
     
 
 
@@ -89,11 +89,17 @@ def PlotTransmission(refTrFile, measureTrFiles, workingDirectory = '.', skiprows
 
     trSpectraFig.colorbar(transmissionGraph)
 
-    xtickCount = 10
-    # xtickLabels = np.arange(refFreq[0], refFreq[-1], xtickCount)
-    # xtickLabelPositions = np.arange()
+    xtickCount = 11
+    xtickValueStep = (refFreq[-1]-refFreq[0])/(xtickCount-1)
+    xtickLabels = np.around(np.arange(refFreq[0], refFreq[-1] + xtickValueStep, xtickValueStep), decimals=3)
+    xtickPosStep = (nPoints - 0)/(xtickCount-1)
 
-    # plt.xticks(np.arange(min(refFreq), max(refFreq), xtickCount))
+    xtickLabelPositions = np.arange(0, nPoints + xtickPosStep, xtickPosStep)
+
+    print(xtickLabels)
+    print(xtickLabelPositions)
+
+    plt.xticks(xtickLabelPositions, xtickLabels)
 
 
     ytickLabels = np.asarray(legends).astype(np.float)

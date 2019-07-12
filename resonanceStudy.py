@@ -30,7 +30,7 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
   airCylinder = mp.Cylinder(r, material=mp.air)
   hBNCylinder = mp.Cylinder(r, material=dielectricMaterial)
 
-  if(geometryLattice is not None):
+  if(geometryLattice is None):
     print('No lattice provided, setup triangle lattice...')
     basis1 = mp.Vector3(math.sqrt(3)/2, 0.5)
     basis2 = mp.Vector3(math.sqrt(3)/2, -0.5)
@@ -77,9 +77,9 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
 
   """ Use a Gaussian source to excite """
   excitationSource = [mp.Source(mp.GaussianSource(frequency=fcen,fwidth=df),
-                      component=mp.Ey,
+                      component=mp.Hz,
                       center=pointSourceLocation, 
-                      size=mp.Vector3(0, bridgeWidth))]
+                      size=mp.Vector3(0, 0))]
 
   pml_layers = [mp.PML(PMLThickness)]
 
@@ -104,30 +104,28 @@ if __name__ == '__main__':
   """ Set up argparser here"""
   parser = argparse.ArgumentParser(description = 'Configure and run meep on certain geometry')
 
-  pythonScriptName = 'brd_wvg_cvt_diff_spc'
+  pythonScriptName = 'resonanceStudy'
 
   PMLThickness = 1.0
   
-  eps0 = 4.84
+  eps0 =  4.84
   r0 = 0.38
   # f0 = 0.344086 # center frequency of the source
   framerate = 8
   unitCellCountX = 20
   unitCellCountY = 1
 
-  simDomainSizeX = 14
+  simDomainSizeX = 50
   simDomainSizeY = 6
 
-  bridgeWidth = 1.2
+  bridgeWidth = 1
 
   """ Analysis parameters """
   nfreq = 4000 # number of frequencies at which to compute flux
   # nfreq = 500
   fluxFcen = 0.5
   fluxDF = 0.8
-  
-  harminvF0 = 0.25
-  harminvDf = 0.2
+
 
   """ setup the geometry lattice """
   basis1 = mp.Vector3(1, 0)
@@ -137,15 +135,10 @@ if __name__ == '__main__':
                                   basis1 = basis1,
                                   basis2 = basis2)
 
-  """ run with flux calculation """
-  # print(f'{mp.lattice_to_cartesian(mp.Vector3(0,1,0), geometryLattice)}')
-  fluxCutline = mp.FluxRegion(center=mp.Vector3( simDomainSizeX/2 - 1 * PMLThickness - 0.5, 0), size=mp.Vector3(0, 2* bridgeWidth))#, direction = mp.X)
-
-
   """ Parameter sweeps """
   cavityUnitCellCountQuery  = np.arange(1, 3, 1)
-  isMakingCavityQuery       = [True, False]
-  separationQuery           = np.arange(1.5, 1.6, 0.01)
+  isMakingCavityQuery       = [True]
+  separationQuery           = np.arange(1.65, 1.67, 0.005)
 
   """ Setups for printing stdout into a file"""
   # originalStdout = sys.stdout
@@ -153,8 +146,8 @@ if __name__ == '__main__':
 
   """ Uncomment the following lines to make just a line defect """
   # cavityUnitCellCountQuery  = [3, 4, 5, 6]
-  cavityUnitCellCountQuery = [ 3]
-  # separationQuery = [1.64] 
+  cavityUnitCellCountQuery = [9]
+  # separationQuery = [1.56]
   # separationQuery           = [1, 1.2 , 1.5, 2]
   
   # epsQuery = [5, 7, 9, 11, 13]
@@ -162,17 +155,17 @@ if __name__ == '__main__':
   refIsCalculated=False 
   
   # exciteF0Query = np.arange(0.390, 0.490, 0.01)
-  exciteF0Query = [0.4]
-  df = 0.6 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
+  exciteF0Query = [0.3]
+  df = 0.5 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
 
   
-  harminvF0 = 0.3
-  harminvDf = harminvF0
-  ptSourceLocation = mp.Vector3(- (simDomainSizeX/2- 1 * PMLThickness) , 0)
+  harminvF0 = 0.331
+  harminvDf = 0.1
+  # ptSourceLocation = mp.Vector3(0.1, 0.1)
   
-  # ptSourceLocation = mp.Vector3(- (simDomainSizeX/2 - 1.5 * PMLThickness), 0)
+  ptSourceLocation = mp.Vector3(0, 0)
   
-  defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
+  defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/resonanceStudy'
   
   sim = None
   for f0 in exciteF0Query:
@@ -187,13 +180,13 @@ if __name__ == '__main__':
         for separation in separationQuery:
           
           if(isMakingCavity):
-            runDescription = f'with_cavity-{cavityUnitCellCount}_r-{r0:.3f}_NRow-{unitCellCountY}_sep-{separation:.3f}_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
+            runDescription = f'with_cavity-{cavityUnitCellCount}_r-{r0:.3f}_NRow-{unitCellCountY}_sep-{separation:.3f}_excite_fc-{f0:.3f}_bw-{df:.3f}_harminv_fc-{harminvF0:.3f}_df-{harminvDf:.3f}'
           else:
             refIsCalculated = True
-            runDescription = f'no-cavity_r-{r0:.3f}_NRow-{unitCellCountY}_sep-0_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
+            runDescription = f'no-cavity_r-{r0:.3f}_NRow-{unitCellCountY}_sep-0_excite_fc-{f0:.3f}_bw-{df:.3f}_harminv_fc-{harminvF0:.3f}_df-{harminvDf:.3f}'
 
           
-          fieldFileBasename = f'{runDescription}_ez'
+          fieldFileBasename = f'{runDescription}_field'
           epsMapFileBasename = f'{runDescription}_eps'
           fluxFileBasename = f'{runDescription}_flux'
 
@@ -208,39 +201,27 @@ if __name__ == '__main__':
           # sim.init_sim()
           sim.use_output_directory(defaultResultFolder)
 
-          """ add_flux for calculate flux """
-          trans = sim.add_flux(fluxFcen, fluxDF, nfreq, fluxCutline)
-
           if (isMakingCavity) :
             sim.run(
-              # mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), harminvF0, harminvDf)),
+              mp.after_sources(mp.Harminv(mp.Hz, mp.Vector3(0, 0), harminvF0, harminvDf)),
               mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
-              # mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)),
+              # mp.to_appended(f'{fieldFileBasename}_Hz', mp.at_every(1 / f0 / framerate, mp.output_hfield_z)),
+              # mp.to_appended(f'{fieldFileBasename}_Hx', mp.at_every(1 / f0 / framerate, mp.output_hfield_x)),
+              # mp.to_appended(f'{fieldFileBasename}_Ey', mp.at_every(1 / f0 / framerate, mp.output_efield_y)),
+              # mp.to_appended(f'{fieldFileBasename}_Ez', mp.at_every(1 / f0 / framerate, mp.output_efield_z)),
               # until=200)
               # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
-              # until_after_sources = 500)
-              until_after_sources = mp.stop_when_fields_decayed(50, mp.Ey, mp.Vector3(simDomainSizeX/2 - PMLThickness - 0.5, 0), 1e-3))
-          else:
-            sim.run(
-              # mp.after_sources(mp.Harminv(mp.Ey, mp.Vector3(0, 0), harminvF0, harminvDf)),
-              mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
-              # mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)),
-              # until=50)
-              # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
-              until_after_sources = mp.stop_when_fields_decayed(50, mp.Ey, mp.Vector3(simDomainSizeX/2 - PMLThickness - 0.5, 0), 1e-3))
+              until_after_sources = 200)
+              # until_after_sources = mp.stop_when_fields_decayed(50, mp.Ey, mp.Vector3(simDomainSizeX/2 - PMLThickness - 0.5, 0), 1e-3))
+          # else:
+          #   sim.run(
+          #     mp.after_sources(mp.Harminv(mp.Hz, mp.Vector3(0, 0), harminvF0, harminvDf)),
+          #     mp.at_beginning(mp.to_appended(epsMapFileBasename, mp.output_epsilon)),
+          #     # mp.to_appended(fieldFileBasename, mp.at_every(1 / f0 / framerate, mp.output_efield_z)),
+          #     until_after_sources = 200)
+          #     # mp.during_sources(mp.in_volume(vol, mp.to_appended(f'{runDescription}_ez-slice', mp.at_every(0.4, mp.output_efield_z)))),
+          #     # until_after_sources = mp.stop_when_fields_decayed(50, mp.Ey, mp.Vector3(simDomainSizeX/2 - PMLThickness - 0.5, 0), 1e-3))
 
-          # print(f'Run description: {runDescription}')
-      
-          with open(fluxDataFilename, 'w') as csvrecord:
-            print(f'point stdout to {fluxDataFilename}')
-            sys.stdout = csvrecord
-            sim.display_fluxes(trans)  # print out the flux spectrum
-            sys.stdout = open("/dev/stdout", "w")
-            # print('print back to the real stdout')
-            print('Flux data saved at')
-            print(fluxDataFilename)
-            print('or')
-            print(f'{fluxFileBasename}.csv')
             
           """ closing log files """
           # initLog.close()
