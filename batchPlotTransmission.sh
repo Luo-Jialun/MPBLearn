@@ -19,9 +19,9 @@ epsSet=4.84
 
 
 
-referenceFile=no-cavity_r-0.380_NRow-5_sep-0_excite_fc-0.400_bw-0.700_flux_fc-0.400_df-0.600_flux.csv
+referenceFile=no-cavity_rRR-0.300_RRShift-0.100_excite_fc-0.400_bw-0.700_flux_fc-0.400_df-0.600_flux.csv
 
-testFiles=with_cavity-*_r-0.380_NRow-5_sep-1.560_excite_fc-0.400_bw-0.700_flux_fc-0.400_df-0.600_flux.csv
+testFiles=with-cavity-3_rRR-0.300_RRShift-0.1*_excite_fc-0.400_bw-0.700_flux_fc-0.400_df-0.600_flux.csv
 
 
 python $scriptPath/PostProcessingUtils.py -p $referenceFile  $testFiles

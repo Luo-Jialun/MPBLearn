@@ -22,7 +22,7 @@ import sys
 import subprocess
 
 
-def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0, separation = 2.0, defectY = math.sqrt(3), waveguideLineY = -math.sqrt(3), rRR = 0.21
+def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCountY=5, computeCellSizeX=20, computeCellSizeY=10, doFlux = True, geometryLattice=None, makeCavity=False, cavityUnitCellCount=2, pointSourceLocation=None, PMLThickness=1.0, sidebankThickness = 1.0, bridgeWidth = 1.0, separation = 2.0, defectY = math.sqrt(3), waveguideLineY = -math.sqrt(3), rRR = 0.21, RRShift=0.1
 ):
   computationCell = mp.Vector3(computeCellSizeX, computeCellSizeY)
 
@@ -49,24 +49,27 @@ def setupSimulaion(eps=1, r=0.2, fcen=0.4, df=0.2, unitCellCountX=20, unitCellCo
   for hole in airHoles:
     geometryAssembly.append(hole)
 
-  """ change the center into cartesian coordinates for meep"""
-  for geometricObject in geometryAssembly:
-      geometricObject.center = mp.lattice_to_cartesian(geometricObject.center, geometryLattice)
-
-  """ make a defect line at y = -2 * sqrt(3)/2 """
+  """ make a defect line at ybasis = waveguideLineY"""
   for i in range(unitCellCountX):
       shift = math.ceil(unitCellCountX/2)-1
       geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(1 * (i-shift), waveguideLineY)))
 
+  """ change the center into cartesian coordinates for meep"""
+  for geometricObject in geometryAssembly:
+      geometricObject.center = mp.lattice_to_cartesian(geometricObject.center, geometryLattice)
+
+
+
 
 
   """ make a cavity at the 4th line below the waveguide line """
+  """ Refer to Susumu Noda's high Q photonic crystal paper for the geometry idea """
   if(makeCavity):
     for i in range(cavityUnitCellCount + 2):
       shift = math.ceil(cavityUnitCellCount / 2) - 1
       geometryAssembly.append(mp.Cylinder(r, material=dielectricMaterial, center=mp.Vector3(1 * (i - shift), defectY)))
-    geometryAssembly.append(mp.Cylinder(rRR, material=mp.air, center=mp.Vector3(1 * (0 - shift), defectY)))
-    geometryAssembly.append(mp.Cylinder(rRR, material=mp.air, center=mp.Vector3(1 * (cavityUnitCellCount + 1 - shift), defectY)))
+    geometryAssembly.append(mp.Cylinder(rRR, material=mp.air, center=mp.Vector3(1 * (0 - shift) - RRShift, defectY)))
+    geometryAssembly.append(mp.Cylinder(rRR, material=mp.air, center=mp.Vector3(1 * (cavityUnitCellCount + 1 - shift) + RRShift, defectY)))
 
   """ for finding my (0,0) coordinate... comment out when running actual simulation"""
   # geometryAssembly.append(mp.Cylinder(0.1, material=mp.air, center=mp.Vector3(0, defectY)))
@@ -114,8 +117,9 @@ if __name__ == '__main__':
 
   ''' geometries '''
 
-  r0 = 0.38
+  r0 = 0.382
   r1 = 0.25
+  r1Shift = 0.1
   d1 = 0.1
   # f0 = 0.344086 # center frequency of the source
   framerate = 8
@@ -125,9 +129,10 @@ if __name__ == '__main__':
   simDomainSizeX = 40
   simDomainSizeY = 20
 
-  bridgeWidth = 15
+  bridgeWidthPadding = 1
+  bridgeWidth = 15 * math.sqrt(3) / 2 + bridgeWidthPadding
   defectYSet = math.sqrt(3)
-  waveguideY = - math.sqrt(3)
+  waveguideY = 0
 
   """ Analysis parameters """
   nfreq = 4000 # number of frequencies at which to compute flux
@@ -159,7 +164,7 @@ if __name__ == '__main__':
   """ Setups for printing stdout into a file"""
   # originalStdout = sys.stdout
 
-
+  cavityUnitCellCount = 3
   cavityUnitCellCountQuery  = [3]
   # cavityUnitCellCountQuery = [9]
   separationQuery = [1.56]
@@ -172,35 +177,35 @@ if __name__ == '__main__':
   # exciteF0Query = np.arange(0.390, 0.490, 0.01)
   exciteF0Query = [0.4]
   df = 0.7 # bandwidth of the source (Gaussian frequency profile, 1 sigma frequency)
+  rRRQuery = np.arange(0.25, 0.38, 0.01)
+  RRShiftQuery = np.arange(0, 0.15, 0.01)
 
-  
   harminvF0 = 0.35
   harminvDf = 0.15
   ptSourceLocation = mp.Vector3(- (simDomainSizeX/2- 1 * PMLThickness) , waveguideY)
   
   # ptSourceLocation = mp.Vector3(- (simDomainSizeX/2 - 1.5 * PMLThickness), 0)
-  
+  isResonanceStudy = False
+
   defaultResultFolder = '/home/mumaxbaby/Documents/jialun/MPBLearn/results/meepTrigLatCylAirHole'
   
   sim = None
   for f0 in exciteF0Query:
     
     for isMakingCavity in isMakingCavityQuery:
-      """ End the current loop after one run of without holes (when isMakingCavity == False)""" 
-      if(refIsCalculated):
-        # refIsCalculated = False
-        exit(5)
-        break
+      for r1 in rRRQuery:
+        for r1Shift in RRShiftQuery:
+          """ End the current loop after one run of without holes (when isMakingCavity == False)"""
+          if (refIsCalculated):
+            # refIsCalculated = False
+            # break
+            exit(10)
 
-      
-      for cavityUnitCellCount in cavityUnitCellCountQuery:
-        for separation in separationQuery:
-          
           if(isMakingCavity):
-            runDescription = f'with_cavity-{cavityUnitCellCount}_r-{r0:.3f}_NRow-{unitCellCountY}_sep-{separation:.3f}_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
+            runDescription = f'with-cavity-{cavityUnitCellCount}_rRR-{r1:.3f}_RRShift-{r1Shift:.3f}_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
           else:
             refIsCalculated = True
-            runDescription = f'no-cavity_r-{r0:.3f}_NRow-{unitCellCountY}_sep-0_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
+            runDescription = f'no-cavity_rRR-{r1:.3f}_RRShift-{r1Shift:.3f}_excite_fc-{f0:.3f}_bw-{df:.3f}_flux_fc-{fluxFcen:.3f}_df-{fluxDF:.3f}'
 
           
           fieldFileBasename = f'{runDescription}_field'
@@ -213,13 +218,17 @@ if __name__ == '__main__':
           initLogFilename = f'{defaultResultFolder}/{runDescription}.initialization.log'
           fluxDataFilename = f'{defaultResultFolder}/{fluxFileBasename}.csv'
                     
-          sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth, separation = separation, pointSourceLocation=ptSourceLocation, defectY = defectYSet, waveguideLineY = waveguideY, rRR = r1)
+          sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth, pointSourceLocation=ptSourceLocation, defectY = defectYSet, waveguideLineY = waveguideY, rRR = r1, RRShift = r1Shift)
           # sim = setupSimulaion(eps = eps0, r = r0, fcen = f0, df = df, unitCellCountX = unitCellCountX, unitCellCountY = unitCellCountY, geometryLattice=geometryLattice, computeCellSizeX=simDomainSizeX, computeCellSizeY=simDomainSizeY, makeCavity=isMakingCavity, cavityUnitCellCount=cavityUnitCellCount, bridgeWidth = bridgeWidth, separation = separation)
           # sim.init_sim()
           sim.use_output_directory(defaultResultFolder)
 
           """ add_flux for calculate flux """
           trans = sim.add_flux(fluxFcen, fluxDF, nfreq, fluxCutline)
+
+          if (isResonanceStudy):
+            sim.run()
+            break
 
           if (isMakingCavity) :
             sim.run(
@@ -251,7 +260,7 @@ if __name__ == '__main__':
             print(fluxDataFilename)
             print('or')
             print(f'{fluxFileBasename}.csv')
-            
+
           """ closing log files """
           # initLog.close()
           # runLog.close()
